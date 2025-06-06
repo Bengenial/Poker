@@ -4,6 +4,8 @@
 #include "tdas/heap.h"
 #include "tdas/extra.h"
 #include <string.h>
+#include <time.h>
+#include <windows.h>
 
 typedef struct{
 	int id;
@@ -62,6 +64,25 @@ void leerCartas(Baraja *baraja){
 	fclose(archivo); // Cierra el archivo después de leer todas las líneas
 }
 
+void intercambiarCartas(Carta *a, Carta *b){
+	Carta aux = *a;
+    *a = *b;
+    *b = aux;
+}
+
+void barajarCartas(Baraja *baraja){
+	static int semilla_inicializada = 0;
+    if (!semilla_inicializada) {
+        srand(time(NULL));
+        semilla_inicializada = 1;
+    }
+
+    for (int i = baraja->num_cartas - 1; i > 0; i--) {
+        int j = rand() % (i + 1); // índice aleatorio entre 0 e i
+        intercambiarCartas(&baraja->cartas[i], &baraja->cartas[j]);
+    }
+}
+
 void mostrarCartas(Baraja *baraja){
 	for (int i = 0; i < baraja->num_cartas; i++){
 		Carta *carta = &baraja->cartas[i];
@@ -73,8 +94,11 @@ void mostrarCartas(Baraja *baraja){
 
 
 int main(){
+	SetConsoleOutputCP(CP_UTF8); //gracias compañero de telegram
+
 	Baraja baraja;
 	leerCartas(&baraja);
+	
 
 	char opcion;
 	do{
@@ -93,6 +117,7 @@ int main(){
 		switch (opcion){
 		case '1':
 			mostrarCartas(&baraja);
+			barajarCartas(&baraja);
 			break;
 		case '2':
 			// bfs(estado_inicial);
