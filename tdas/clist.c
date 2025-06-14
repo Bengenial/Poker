@@ -128,3 +128,8 @@ int clist_size(CList *L) {
     if (!L) return 0;
     return L->size;
 }
+
+void *clist_getCurrent(CList *L) {
+    if (!L || !L->current) return NULL;
+    return L->current->data;
+}

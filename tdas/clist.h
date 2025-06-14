@@ -36,4 +36,7 @@ int clist_size(CList *L);
 // Limpia la lista y libera memoria
 void clist_clean(CList *L);
 
+// Esta función devuelve el dato del nodo actual (current) sin mover el puntero.
+void *clist_getCurrent(CList *L);
+
 #endif
