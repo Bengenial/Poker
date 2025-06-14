@@ -40,10 +40,9 @@ typedef struct{
 	CList *jugadores;
 	int numJugadores;
 	Jugador *siguienteApuesta;
-	Jugador *jugadorParte;
 	Jugador *jugadorCiegaMayor;
 	Jugador *jugadorCiegaMenor;
-	Jugador *boton;
+	Jugador *jugadorBoton;
 	Baraja baraja;
 	Mesa mesa;
 	int ronda;
@@ -62,6 +61,13 @@ typedef enum {
     ESCALERA_REAL = 9
 } TipoMano;
 
+typedef enum{
+	ACCION_FOLD,
+	ACCION_CHECK,
+	ACCION_CALL,
+	ACCION_RAISE
+}Accion;
+
 typedef struct{
 	TipoMano tipo;
 	int valores[5];
@@ -69,9 +75,9 @@ typedef struct{
 } ManoEvaluada;
 
 typedef struct{
-	Carta cartas[7];
-	int numCartas;
-	ManoEvaluada mejorMano;
+	Carta cartas[7]; //2 propias + 5 en mesa
+	int numCartas; //numero total de cartas?
+	ManoEvaluada mejorMano; //Resultado esperado de la mejor mano encontrada?
 } GrafoMano;
 
 int obtenerValorCarta(char *valor){
@@ -79,7 +85,7 @@ int obtenerValorCarta(char *valor){
 	if(strcmp(valor, "K") == 0) return 13;
 	if(strcmp(valor, "Q") == 0) return 12;
 	if(strcmp(valor, "J") == 0) return 11;
-	return atoi(valor);
+	return atoi(valor); //otro valores (2-10)
 }
 
 int obtenerIndicePalo(char *color){
@@ -154,9 +160,9 @@ void contarRepeticiones(Carta cartas[], int numCartas, int repeticiones[], int v
         repeticiones[valor]++;
         valores[i] = valor;
     }
-}
+} //sirve para ver los pares y/o trios
 
-ManoEvaluada evaluarMano(Carta cartas[], int numCartas) {
+ManoEvaluada evaluarMano(Carta cartas[], int numCartas) { //puede ser cartas[7]
     ManoEvaluada mano = {CARTA_ALTA, {0}, 0};
 
     qsort(cartas, numCartas, sizeof(Carta), compararCartas);
@@ -250,9 +256,134 @@ ManoEvaluada evaluarMano(Carta cartas[], int numCartas) {
                          kickers[3] * 10 + kickers[4];
     }
 
-    return mano;
+    return mano; //returna 
 }
 
+/*Accion tomarDeciciones(ManoEvaluada manoActual, int apuestaActual)
+{	
+	//Tener en cuenta que la IA es lo más basico, osea va a ser predesible (por el momento...)
+	
+	if(mano.puntuacion < 1500000) //numero por definirse, pero es un ejemplo
+	{ //pesima mano
+	 	if(apuestaActual > 0) return ACCION_FOLD; //en este caso si aumentan la apuesta, me retiro (fold)
+		else return ACCION_CHECK; si no aumentan la apuestaa, chekeamos (seguimos)
+	}
+
+	else{
+		if(mano.puntuacion < 30000000)
+		{ //mano decente
+		 if(apuestaActual > 0) return ACCION_CALL; //ya que tiene una mano decente, puede permitirse igualar la apuesta
+		 else return ACCION_CHECK;
+		}
+		else{ //si tiene una muy buena mano
+			return ACCION_RAISE; va a aumentar la apuesta
+		}
+	}
+}*/
+
+/*	//Esto va dentro de la ronda de apuestas, en caso de que sea bot y en que sea humano
+    //Por mientras lo dejo comentado mientras benjoid cocina
+typedef struct{
+	char nombre[50];
+	int fichas;
+	List *mano;
+	int esBot;
+	char estado[10]; //jugando, retirado, ganador
+	int apuesta;
+	int yaActuo;
+}Jugador;
+
+	Jugador *jugadorActual = partida->jugadores->actual;
+
+	do{
+		if(strcmp(jugadorActual->estado, "jugando") == 0 ) continue;// está jugando
+
+		if(jugadorActual->esBot){ // 1 si e sbot, osea, verdadero
+		Accion accionATomar = tomarDeciciones(jugadorActual->mano, jugadorActual->apuesta);
+			switch(accionATomar){
+				case ACCION_FOLD:
+					strcpy(jugadorActual->estado, "Retirado");
+					printf("%s se retira.\n", jugadorActual->nombre);
+					break;
+				case ACCION_CHECK:
+					printf("%s pasa.\n", jugadorActual->nombre);
+					break;
+				case ACCION_CALL:
+					//igualar apuesta
+					printf("%s iguala la apuesta.\n", jugadorActual->nombre);
+					break;
+				case ACCION_RAISE:
+					//aumentar apuesta (que sea pequeña, es de prueba)
+					printf("%s aumenta la apuesta.\n", jugadorActual->nombre);
+					break;
+			}
+		} else {
+			//jugador humano, pedirle que ingrese una accion
+			//mostrar mano, mesa, fichas, apuestas, etc.
+			//pedirle que ingrese una accion
+		}
+	}
+
+*/
+
+/* //posible cosa o no c xd, hola benjoid owo
+
+void checkOrCall(Jugador *jugadorActual, int apuestaActual, Partida *partida, Jugador *jugadoresPendientes){
+	if (jugadorActual->apuesta == apuestaActual) {
+		printf("%s pasa.\n", jugadorActual->nombre);
+	} else {
+		int diferencia = apuestaActual - jugadorActual->apuesta;
+		if (jugadorActual->fichas >= diferencia) {
+			jugadorActual->fichas -= diferencia;
+			jugadorActual->apuesta += diferencia;
+			partida->mesa.bote += diferencia;
+			printf("%s iguala la apuesta.\n", jugadorActual->nombre);
+		} else {
+			partida->mesa.bote += jugadorActual->fichas;
+			jugadorActual->apuesta += jugadorActual->fichas;
+			jugadorActual->fichas = 0;
+			printf("%s va all-in.\n", jugadorActual->nombre);
+		}
+	}
+	jugadorActual->yaActuo = 1;
+	(*jugadoresPendientes)--;
+}
+
+void raise(Jugador *jugadorActual, int apuestaActual, Partida *partida, int *apuestaMaxima, Jugador *jugadoresPendientes){
+	//ver como una "diferencia" a la hora de si es jugador humano o bot
+	int cantidad;
+	printf("¿Cuánto quieres subir? (mínimo %d): ", apuestaActual - jugadorActual->apuesta + 1);
+	scanf("%d", &cantidad);
+	if (cantidad > jugadorActual->fichas) cantidad = jugadorActual->fichas;
+	jugadorActual->fichas -= cantidad;
+	jugadorActual->apuesta += cantidad;
+	partida->mesa.bote += cantidad;
+	*apuestaMaxima = jugadorActual->apuesta;
+	printf("%s sube la apuesta a %d.\n", jugadorActual->nombre, jugadorActual->apuesta);
+
+	// Reabrir ronda: todos deben responder al nuevo raise excepto quien lo hizo y los retirados
+	Jugador *jug = clist_first(partida->jugadores);
+	Jugador *inicio = jug;
+	do {
+		if (jug != jugadorActual && strcmp(jug->estado, "Jugando") == 0 && jug->fichas > 0)
+			jug->yaActuo = 0;
+		jug = clist_next(partida->jugadores);
+	} while (jug != inicio);
+	jugadorActual->yaActuo = 1;
+	(*jugadoresPendientes) = contarJugadoresPendientes(partida->jugadores);
+}
+
+
+void fold(Jugador *jugadorActual, Jugador *jugadoresPendientes, Partida *partida){
+	strcpy(jugadorActual->estado, "Retirado");
+	printf("%s se retira.\n", jugadorActual->nombre);
+	jugadorActual->yaActuo = 1;
+	(*jugadoresPendientes)--;
+	// Si solo queda uno, termina la ronda
+	if (contarJugadoresActivos(partida->jugadores) == 1) return;
+}
+
+*/
 
 //GrafoMano crearGrafoMano(List *manoJugador, Mesa mes);
 
@@ -362,7 +493,6 @@ void mostrarMano(List *mano){
 		mostrarPinta(*carta);
 		carta = list_next(mano);
 	}
-	//printf("\n");
 }
 
 int contarJugadoresYGandor(List *jugadores){
@@ -484,88 +614,102 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
     Jugador *actual = partida->siguienteApuesta;
     inicio = actual;
 
-    while (jugadoresPendientes > 0) {
-        if (strcmp(actual->estado, "Jugando") == 0 && actual->fichas > 0) {
-			mostrarMesa(partida->mesa);
-            printf("\nTurno de %s\n\n", actual->nombre);
-            mostrarMano(actual->mano);
-            printf("\nFichas: %d | Apuesta actual: %d | Apuesta máxima: %d\n", actual->fichas, actual->apuesta, apuestaMax);
 
-            int opcion, cantidad = 0;
-            if (actual->apuesta == apuestaMax) {
-                printf("Opciones: [1] Pasar (check) [2] Subir (raise) [3] Retirarse (fold)\n");
-            } else {
-                printf("Opciones: [1] Igualar (call) [2] Subir (raise) [3] Retirarse (fold)\n");
-            }
+    do{
+		printf("JUGADORES PENDIENTES = %d\n", jugadoresPendientes);
+		if (strcmp(actual->estado, "Jugando") == 0 && actual->fichas > 0) {
+			if(partida->mesa.total) mostrarMesa(partida->mesa);
+			printf("\nTurno de %s\n", actual->nombre);
+			if (actual == partida->jugadorBoton) printf("BOTÓN\n\n");
+			else if (actual == partida->jugadorCiegaMenor) printf("CIEGA MENOR\n\n");
+			else if (actual == partida->jugadorCiegaMayor) printf("CIEGA MAYOR\n\n");
+			else printf("\n\n");
+			
+			mostrarMano(actual->mano);
+			printf("\nFichas: %d | Apuesta actual: %d | Apuesta máxima: %d\n", actual->fichas, actual->apuesta, apuestaMax);
 
-            do {
-                printf("Elige una opción: ");
-                if (scanf("%d", &opcion) != 1) {
-                    while (getchar() != '\n');
-                    opcion = 0;
-                }
-            } while (opcion < 1 || opcion > 3);
+			int opcion, cantidad = 0;
+			if (actual->apuesta == apuestaMax) {
+				printf("Opciones: [1] Pasar (check) [2] Subir (raise) [3] Retirarse (fold)\n");
+			} else {
+				printf("Opciones: [1] Igualar (call) [2] Subir (raise) [3] Retirarse (fold)\n");
+			}
 
-            switch (opcion) {
-                case 1: // check o call
-                    if (actual->apuesta == apuestaMax) {
-                        printf("%s pasa.\n", actual->nombre);
-                    } else {
-                        int diferencia = apuestaMax - actual->apuesta;
-                        if (actual->fichas >= diferencia) {
-                            actual->fichas -= diferencia;
-                            actual->apuesta += diferencia;
-                            partida->mesa.bote += diferencia;
-                            printf("%s iguala la apuesta.\n", actual->nombre);
-                        } else {
-                            partida->mesa.bote += actual->fichas;
-                            actual->apuesta += actual->fichas;
-                            actual->fichas = 0;
-                            printf("%s va all-in.\n", actual->nombre);
-                        }
-                    }
-                    actual->yaActuo = 1;
-                    jugadoresPendientes--;
-                    break;
+			do {
+				printf("Elige una opción: ");
+				if (scanf("%d", &opcion) != 1) {
+					while (getchar() != '\n');
+					opcion = 0;
+				}
+			} while (opcion < 1 || opcion > 3);
 
-                case 2: // Raise
-                    printf("¿Cuánto quieres subir? (mínimo %d): ", apuestaMax - actual->apuesta + 1);
-                    scanf("%d", &cantidad);
-                    if (cantidad > actual->fichas) cantidad = actual->fichas;
-                    actual->fichas -= cantidad;
-                    actual->apuesta += cantidad;
-                    partida->mesa.bote += cantidad;
-                    apuestaMax = actual->apuesta;
-                    printf("%s sube la apuesta a %d.\n", actual->nombre, actual->apuesta);
+			switch (opcion) {
+				case 1: // check o call
+					if (actual->apuesta == apuestaMax) {
+						printf("%s pasa.\n", actual->nombre);
+					} else {
+						int diferencia = apuestaMax - actual->apuesta;
+						if (actual->fichas >= diferencia) {
+							actual->fichas -= diferencia;
+							actual->apuesta += diferencia;
+							partida->mesa.bote += diferencia;
+							printf("%s iguala la apuesta.\n", actual->nombre);
+						} else {
+							partida->mesa.bote += actual->fichas;
+							actual->apuesta += actual->fichas;
+							actual->fichas = 0;
+							printf("%s va all-in.\n", actual->nombre);
+						}
+					}
+					actual->yaActuo = 1;
+					jugadoresPendientes--;
+					break;
 
-                    // Reabrir ronda: todos deben responder al nuevo raise excepto quien lo hizo y los retirados
-                    jug = clist_first(partida->jugadores);
-                    inicio = jug;
-                    do {
-                        if (jug != actual && strcmp(jug->estado, "Jugando") == 0 && jug->fichas > 0)
-                            jug->yaActuo = 0;
-                        jug = clist_next(partida->jugadores);
-                    } while (jug != inicio);
-                    actual->yaActuo = 1;
-                    jugadoresPendientes = contarJugadoresPendientes(partida->jugadores);
-                    break;
+				case 2: // Raise
+					printf("¿Cuánto quieres subir? (mínimo %d): ", apuestaMax - actual->apuesta + 1);
+					scanf("%d", &cantidad);
+					if (cantidad > actual->fichas) cantidad = actual->fichas;
+					actual->fichas -= cantidad;
+					actual->apuesta += cantidad;
+					partida->mesa.bote += cantidad;
+					apuestaMax = actual->apuesta;
+					printf("%s sube la apuesta a %d.\n", actual->nombre, actual->apuesta);
 
-                case 3: // Fold
-                    strcpy(actual->estado, "Retirado");
-                    printf("%s se retira.\n", actual->nombre);
-                    actual->yaActuo = 1;
-                    jugadoresPendientes--;
-                    // Si solo queda uno, termina la ronda
-                    if (contarJugadoresActivos(partida->jugadores) == 1) return;
-                    break;
-            }
-        }
-        // Avanza al siguiente jugador circularmente
-        do {
-            actual = clist_next(partida->jugadores);
-        } while ((strcmp(actual->estado, "Retirado") == 0 || actual->fichas == 0 || actual->yaActuo) && actual != inicio);
+					// Reabrir ronda: todos deben responder al nuevo raise excepto quien lo hizo y los retirados
+					jug = clist_first(partida->jugadores);
+					inicio = jug;
+					do {
+						if (jug != actual && strcmp(jug->estado, "Jugando") == 0 && jug->fichas > 0)
+							jug->yaActuo = 0;
+						jug = clist_next(partida->jugadores);
+					} while (jug != inicio);
+					actual->yaActuo = 1;
+					jugadoresPendientes = contarJugadoresPendientes(partida->jugadores);
+					break;
+
+				case 3: // Fold
+					strcpy(actual->estado, "Retirado");
+					printf("%s se retira.\n", actual->nombre);
+					actual->yaActuo = 1;
+					jugadoresPendientes--;
+					// Si solo queda uno, termina la ronda
+					if (contarJugadoresActivos(partida->jugadores) == 1) return;
+					break;
+			}
+		}
+		// Avanza al siguiente jugador circularmente
+		
+		/*
+		do {
+			actual = clist_next(partida->jugadores);
+		} while ((strcmp(actual->estado, "Retirado") == 0 || actual->fichas == 0 || actual->yaActuo) && actual != inicio);
+		*/
+		
+	
+		actual = clist_next(partida->jugadores);
 		limpiarPantalla();
-	}
+	//}while(actual != inicio);	
+	}while(actual != inicio);
 
     // Reinicia apuestas para la siguiente ronda
     jug = clist_first(partida->jugadores);
@@ -576,7 +720,7 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
     } while (jug != inicio);
 }
 
-void iniciarRonda(Partida partida){
+void iniciarRonda(Partida partida, int IArand){
 	int ciegaMayor = 10;
 	int ciegaMenor = 5;
 	
@@ -608,28 +752,46 @@ void iniciarRonda(Partida partida){
 
 	barajarCartas(&partida.baraja); // Barajar cartas
 	repartirCartas(&partida);
-	rondaDeApuestas(&partida);
+	rondaDeApuestas(&partida);//agregar IArand dsp
 	//ver si todos foldearon
+	/*if ( todosFold(&partida) )
+	{
+		return;
+	}*/
 	crearFlop(&partida); //(3 cartas)
 	rondaDeApuestas(&partida);
 	//ver si todos foldearon
+	/*if ( todosFold(&partida) )
+	{
+		return;
+	}*/
 	crearTurn(&partida); //(1 carta)
 	rondaDeApuestas(&partida);
 	//ver si todos foldearon
+	/*if ( todosFold(&partida) )
+	{
+		return;
+	}*/
 	crearRiver(&partida); //(1 carta)
 	
 	rondaDeApuestas(&partida); //final
 	printf("TERMINO\n\n");
 	//ver si todos foldearon
-	//definirGanador();
+	/*if ( todosFold(&partida) )
+	{
+		return;
+	}*/
+	//definirGanador(&partida);
 	//eliminarJugadores()-
 	
 }
 
-void iniciarPartida(){
+void iniciarPartida(int IArand){
 	char nombre[50];
 	int jugadores;
 	Partida partida;
+	//testeo de elecciones
+	IArand = 0;
 
 	partida.jugadores = clist_create();
 
@@ -666,30 +828,85 @@ void iniciarPartida(){
     Jugador *ciegaMayor = clist_next(partida.jugadores); // Ciega mayor
     Jugador *siguienteApuesta = clist_next(partida.jugadores); // Primer jugador en hablar preflop
 
-    partida.boton = boton;
+    partida.jugadorBoton = boton;
     partida.jugadorCiegaMenor = ciegaMenor;
     partida.jugadorCiegaMayor = ciegaMayor;
-    partida.siguienteApuesta = siguienteApuesta;
-    partida.jugadorParte = siguienteApuesta; // Si quieres que el que parte sea el primero en hablar
+    partida.siguienteApuesta = siguienteApuesta; //parte
 
 	partida.baraja = baraja;
 	partida.ronda = 0;
 	
-	iniciarRonda(partida);
+	
+	Jugador *jug = clist_first(partida.jugadores);
+    Jugador *inicio = jug;
+
+    do {
+        printf("JUGADOR = %s es ", jug->nombre);
+		if(jug == partida.jugadorBoton) printf("BOTON\n");
+		else if (jug == partida.jugadorCiegaMayor) printf("CIEGA MAYOR\n");
+		else if (jug == partida.jugadorCiegaMenor) printf("CIEGA MENOR\n");
+		else if (jug == partida.siguienteApuesta) printf("EMPIEZA\n");
+		else printf("NORMAL\n");
+
+		jug = clist_next(partida.jugadores);
+    } while (jug != inicio);
+	
+	iniciarRonda(partida,IArand);
 
 }
-
-void eliminarJugadores(List *jugadores) // hacer posible mapa hash
+/*
+int todosFold(Partida partida)
 {
-	Jugador *jug = list_first(jugadores);
-	while (jug)
-	{
+	Jugador *jug = clist_first(partida.jugadores);
+	Jugador *inicio = jug;
+	int totaljug = partida.numJugadores - 1;
+	int totalret = 0;
+	do{
+		
+		if ( strcmp(jug->estado, "Retirado") )
+		{
+			totalret++;
+		}
+		if ( totalret == totaljug )
+		{
+			return 1;
+		}
+		jug = clist_next(jugadores);
+	} while ( jug != inicio );
+	return 0;
+}*/
+
+/*
+void definirGanadorPARTIDA(Partida partida) //incompleto
+{
+	Jugador *jug = clist_first(partida.jugadores);
+	Jugador *inicio = jug;
+	int mayorfichas = jug->fichas;
+	Jugador *best = jug;
+	do{
+		if ( jug->fichas > mayorfichas )
+		{
+			mayorfichas = jug->fichas;
+			best = jug;
+		}
+		jug = clist_next(jugadores);
+	} while ( jug != inicio );
+	
+	printf("¡%c es el ganador definitivo!", best->nombre )
+}
+*/
+void eliminarJugadores(CList *jugadores) // hacer posible mapa hash
+{
+	Jugador *jug = clist_first(jugadores);
+	Jugador *inicio = jug;
+	do{
+		
 		if ( jug->fichas == 0 )
 		{
 			strcpy(jug->estado, "Eliminado");
 		}
-		jug = list_next(jugadores);
-	}
+		jug = clist_next(jugadores);
+	} while ( jug != inicio );
 }
 
 void intro(){
@@ -719,6 +936,7 @@ int main(){
 	limpiarPantalla();
 	//intro();
 	limpiarPantalla();
+	int IArand;
 
 	char opcion;
 	do{
@@ -728,6 +946,7 @@ int main(){
 
 		puts("1) Iniciar Partida");
 		puts("2) Salir");
+		puts("3) Activar IArand");
 
 		printf("Ingrese su opción: ");
 		scanf(" %c", &opcion);
@@ -736,7 +955,20 @@ int main(){
 
 		switch (opcion){
 		case '1':
-			iniciarPartida();
+			iniciarPartida(IArand);
+
+			//mostrarCartas(&baraja);
+			//barajarCartas(&baraja);
+			break;
+		case '3':
+			//ahora es un toggle, será usado para que la IA no haga siempre las mejores decisiones. 
+			if ( IArand = 0 )
+			{
+				IArand = 1;
+			} else
+			{
+				IArand = 0;
+			}
 
 			//mostrarCartas(&baraja);
 			//barajarCartas(&baraja);
