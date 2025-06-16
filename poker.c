@@ -40,7 +40,7 @@ typedef struct{
 typedef struct{
 	CList *jugadores;
 	int numJugadores;
-	Jugador *siguienteApuesta;
+	Jugador *siguienteApuesta; //siguiente en partir
 	Jugador *jugadorCiegaMayor;
 	Jugador *jugadorCiegaMenor;
 	Jugador *jugadorBoton;
@@ -81,6 +81,11 @@ typedef struct{
 	int numCartas; //numero total de cartas?
 	ManoEvaluada mejorMano; //Resultado esperado de la mejor mano encontrada?
 } GrafoMano;
+
+typedef struct {
+    Jugador *jugador;
+    ManoEvaluada mano;
+} JugadorEvaluado;
 
 int obtenerValorCarta(char *valor){
 	if(strcmp(valor, "A") == 0) return 14;
@@ -261,6 +266,217 @@ ManoEvaluada evaluarMano(Carta cartas[], int numCartas) { //puede ser cartas[7]
     return mano; //returna 
 }
 
+void combinarCartasJugador(List *manoJugador, Mesa mesa, Carta cartasCombinadas[]){
+	int index = 0;
+	Carta *carta = list_first(manoJugador);
+	while(carta != NULL){
+		cartasCombinadas[index] = *carta;
+		index++;
+		carta = list_next(manoJugador);
+	}
+	for (int i = 0; i < mesa.total; i++) {
+		cartasCombinadas[index] = mesa.cartas[i];
+		index++;
+	}
+}
+
+void mostrarTipoMano(TipoMano tipo) {
+    switch (tipo) {
+        case ESCALERA_REAL:
+            printf("Escalera Real");
+            break;
+        case ESCALERA_COLOR:
+            printf("Escalera de Color");
+            break;
+        case POKER_MANO:
+            printf("Poker");
+            break;
+        case FULL_HOUSE:
+            printf("Full House");
+            break;
+        case COLOR:
+            printf("Color");
+            break;
+        case ESCALERA:
+            printf("Escalera");
+            break;
+        case TRIO:
+            printf("Trio");
+            break;
+        case DOS_PARES:
+            printf("Dos Pares");
+            break;
+        case PAR:
+            printf("Par");
+            break;
+        case CARTA_ALTA:
+            printf("Carta Alta");
+            break;
+    }
+}
+
+void mostrarPinta(Carta carta)
+{
+	if(strcmp(carta.color, "corazones") == 0) // son iguales
+	{ 
+		printf(" ♥️");
+		return;
+	}
+
+	if(strcmp(carta.color, "diamantes") == 0)
+	{ 
+		printf(" ♦️");
+		return;
+	}
+	
+	if(strcmp(carta.color, "picas") == 0)
+	{ 
+		printf(" ♠️");
+		return;
+	}
+	
+	printf(" ♣️");
+	
+}
+
+void mostrarCartasJugador(Jugador *jugador) {
+    printf("%s: ", jugador->nombre);
+    Carta *carta = list_first(jugador->mano);
+    while (carta != NULL) {
+        printf("%s de %s", carta->valor, carta->color);
+		mostrarPinta(*carta);
+		printf("   ");
+        carta = list_next(jugador->mano);
+    }
+}
+
+void mostrarMesa(Mesa mesa)
+{	
+	printf("MESA ACTUAL:\n");
+	printf("BOTE: %d\n\n", mesa.bote);
+	switch (mesa.total)
+	{
+	case 3:
+		printf("FLOP\n");
+		break;
+	case 4:
+		printf("TURN\n");
+		break;
+	case 5:
+		printf("RIVER\n");
+		break;
+	}
+	
+	for(int k = 0 ; k < mesa.total; k++)
+	{
+		printf("Carta [%d]: %s %s", k+1, mesa.cartas[k].valor, mesa.cartas[k].color);
+		mostrarPinta(mesa.cartas[k]);
+		printf("\n");
+	}
+	
+}
+
+void definirGanador(Partida *partida){
+	printf("\n=== SHOWDOWN ===\n");
+	Sleep(300);
+	mostrarMesa(partida->mesa);
+	Sleep(300);
+	printf("\n");
+	
+	JugadorEvaluado jugadoresEvaluados[10];
+	int numJugadoresActivos = 0;
+	Jugador *jug = clist_first(partida->jugadores);
+	Jugador *inicio = jug;
+	do {
+        if (strcmp(jug->estado, "Jugando") == 0) {
+            Carta cartasCombinadas[7]; 
+            combinarCartasJugador(jug->mano, partida->mesa, cartasCombinadas);
+            jugadoresEvaluados[numJugadoresActivos].jugador = jug;
+            jugadoresEvaluados[numJugadoresActivos].mano = evaluarMano(cartasCombinadas, 7);
+            mostrarCartasJugador(jug);
+            printf("- ");
+            mostrarTipoMano(jugadoresEvaluados[numJugadoresActivos].mano.tipo);
+            printf(" (Puntuación: %d)\n", jugadoresEvaluados[numJugadoresActivos].mano.puntuacion);
+            numJugadoresActivos++;
+        }
+        jug = clist_next(partida->jugadores);
+    } while (jug != inicio);
+	if (numJugadoresActivos == 0) {
+        printf("Error: No hay jugadores activos\n");
+        return;
+    }
+	int mejorPuntuacion = jugadoresEvaluados[0].mano.puntuacion;
+	for (int i = 1; i < numJugadoresActivos; i++) {
+        if (jugadoresEvaluados[i].mano.puntuacion > mejorPuntuacion) {
+            mejorPuntuacion = jugadoresEvaluados[i].mano.puntuacion;
+        }
+    }
+	int numGanadores = 0;
+    Jugador *ganadores[10];
+	for (int i = 0; i < numJugadoresActivos; i++) {
+        if (jugadoresEvaluados[i].mano.puntuacion == mejorPuntuacion) {
+            ganadores[numGanadores] = jugadoresEvaluados[i].jugador;
+            numGanadores++;
+        }
+    }
+	printf("\n===RESULTADO===\n");
+	if(numGanadores == 1){
+		printf("Ganador: %s\n", ganadores[0]->nombre);
+		printf("Gana %d fichas\n", partida->mesa.bote);
+		for (int i = 0; i < numJugadoresActivos; i++) {
+            if (jugadoresEvaluados[i].jugador == ganadores[0]) {
+                mostrarTipoMano(jugadoresEvaluados[i].mano.tipo);
+                break;
+            }
+        }
+        printf("\n");
+		ganadores[0]->fichas += partida->mesa.bote;
+		partida->ganador = ganadores[0];
+	}
+	else{
+		printf("Empate entre %d jugadores:\n", numGanadores);
+		int fichasPorJugador = partida->mesa.bote/numGanadores;
+		int resto = partida->mesa.bote % numGanadores;
+		for (int i = 0; i < numGanadores; i++){
+			printf(" - %s", ganadores[i]->nombre);
+			int fichasARecibir = fichasPorJugador;
+			if (i == 0) fichasARecibir += resto;
+			ganadores[i]->fichas += fichasARecibir;
+			printf(" recibe %d fichas\n", fichasARecibir);
+
+		}
+		partida->ganador = ganadores[0];
+	}
+	partida->mesa.bote = 0; // Reiniciar el bote para la siguiente ronda
+	printf("\nFichas después de la mano:\n");
+    jug = clist_first(partida->jugadores);
+    inicio = jug;
+    do {
+        printf("%s: %d fichas\n", jug->nombre, jug->fichas);
+        jug = clist_next(partida->jugadores);
+    } while (jug != inicio);
+}
+
+void limpiarManos(Partida *partida){
+	Jugador *jug = clist_first(partida->jugadores);
+	Jugador *inicio = jug;
+	do{
+		while(list_first(jug->mano) != NULL){
+			list_popFront(jug->mano); //limpiar mano
+		}
+		if(jug->fichas > 0){
+			strcpy(jug->estado, "Jugando");
+		}
+		else{
+			strcpy(jug->estado, "Eliminado");
+		}
+		jug->apuesta = 0;
+		jug->yaActuo = 0;
+		jug->hizoRiseCall = 0;
+		jug = clist_next(partida->jugadores);
+	} while(jug != inicio);
+}
+
 /*Accion tomarDecisiones(ManoEvaluada manoActual, int apuestaActual)
 {	
 	//Tener en cuenta que la IA es lo más basico, osea va a ser predesible (por el momento...)
@@ -268,7 +484,7 @@ ManoEvaluada evaluarMano(Carta cartas[], int numCartas) { //puede ser cartas[7]
 	if(mano.puntuacion < 1500000) //numero por definirse, pero es un ejemplo
 	{ //pesima mano
 	 	if(apuestaActual > 0) return ACCION_FOLD; //en este caso si aumentan la apuesta, me retiro (fold)
-		else return ACCION_CHECK; si no aumentan la apuestaa, chekeamos (seguimos)
+		else return ACCION_CHECK; si no aumentan la apuesta, chekeamos (seguimos)
 	}
 
 	else{
@@ -406,30 +622,6 @@ void repartirCartas(Partida *partida){
     } while (jug != inicio);
 }
 
-void mostrarPinta(Carta carta)
-{
-	if(strcmp(carta.color, "corazones") == 0) // son iguales
-	{ 
-		printf(" ♥️\n");
-		return;
-	}
-
-	if(strcmp(carta.color, "diamantes") == 0)
-	{ 
-		printf(" ♦️\n");
-		return;
-	}
-	
-	if(strcmp(carta.color, "picas") == 0)
-	{ 
-		printf(" ♠️\n");
-		return;
-	}
-	
-	printf(" ♣️\n");
-	
-}
-
 void mostrarMano(List *mano){
 	Carta* carta = list_first(mano);
 
@@ -437,42 +629,18 @@ void mostrarMano(List *mano){
 	while(carta){
 		printf("%s de %s", carta->valor, carta->color);
 		mostrarPinta(*carta);
+		printf("\n");
 		carta = list_next(mano);
 	}
 }
 
 void mostrarGandorFold(Partida *partida){
-	
+	printf("TODOS LOS JUGADORES SE HAN RETIRADO\n");
 	printf("EL JUGADOR %s ha ganado %d fichas\n", partida->ganador->nombre, partida->mesa.bote);
 	//repartir bote
 	partida->ganador->fichas += partida->mesa.bote;
 	partida->mesa.bote = 0;
 
-}
-
-void mostrarMesa(Mesa mesa)
-{	
-	printf("MESA ACTUAL:\n");
-	printf("BOTE: %d\n\n", mesa.bote);
-	switch (mesa.total)
-	{
-	case 3:
-		printf("FLOP\n");
-		break;
-	case 4:
-		printf("TURN\n");
-		break;
-	case 5:
-		printf("RIVER\n");
-		break;
-	}
-	
-	for(int k = 0 ; k < mesa.total; k++)
-	{
-		printf("Carta [%d]: %s %s", k+1, mesa.cartas[k].valor, mesa.cartas[k].color);
-		mostrarPinta(mesa.cartas[k]);
-	}
-	
 }
 
 void crearFlop(Partida *partida){
@@ -555,6 +723,7 @@ void checkOrCall(Jugador *jugadorActual, int apuestaActual, Partida *partida, in
 			jugadorActual->apuesta += diferencia;
 			partida->mesa.bote += diferencia;
 			printf("%s iguala la apuesta.\n", jugadorActual->nombre);
+			if (jugadorActual->fichas == 0) printf("%s va all-in\n", jugadorActual->nombre);
 		} else {
 			partida->mesa.bote += jugadorActual->fichas;
 			jugadorActual->apuesta += jugadorActual->fichas;
@@ -567,7 +736,6 @@ void checkOrCall(Jugador *jugadorActual, int apuestaActual, Partida *partida, in
 	(*jugadoresPendientes)--;
 }
 
-
 void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPendientes, Jugador *inicio, int  *cantidad, Jugador *jug){
 	printf("¿Cuánto quieres subir? (mínimo %d): ", (*apuestaMax) - actual->apuesta + 1);
 	scanf("%d", &(*cantidad));
@@ -578,6 +746,7 @@ void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPen
 	(*apuestaMax) = actual->apuesta;
 	actual->hizoRiseCall = 1;
 	printf("%s sube la apuesta a %d.\n", actual->nombre, actual->apuesta);
+	if (actual->fichas == 0) printf("%s va all-in\n", actual->nombre);
 
 	// Reabrir ronda: todos deben responder al nuevo raise excepto quien lo hizo y los retirados
 	jug = clist_first(partida->jugadores);
@@ -592,7 +761,7 @@ void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPen
 	inicio = actual;
 }
 
-void fold(Jugador *actual, int *jugadoresPendientes, Partida *partida, int *salir, Jugador *inicio){
+void fold(Jugador *actual, int *jugadoresPendientes, Partida *partida, int *salir){
 	//nuevo
 	strcpy(actual->estado, "Retirado");
 	printf("%s se retira.\n", actual->nombre);
@@ -602,10 +771,16 @@ void fold(Jugador *actual, int *jugadoresPendientes, Partida *partida, int *sali
 	(*jugadoresPendientes)--;
 	// Si solo queda uno, termina la ronda
 	if (contarJugadoresActivos(partida->jugadores, actual) == 1){
+		Jugador *actual = clist_first(partida->jugadores);
+		Jugador *inicio = actual;
 		do {
+			if (strcmp(actual->estado, "Jugando") == 0){
+				partida->ganador = actual;
+				break;
+			}
 			actual = clist_next(partida->jugadores);
-		} while ((strcmp(actual->estado, "Retirado") == 0 ||actual->fichas == 0 || actual->yaActuo) && actual != inicio);
-		partida->ganador = actual;
+		} while (actual != inicio);
+		
 		(*salir) = 0;
 	}
 }
@@ -631,7 +806,6 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
     Jugador *inicio = jug;
 	
     do {
-		//printf("JUGADOR = %s\n", jug->nombre);
         jug->yaActuo = 0;
         jug = clist_next(partida->jugadores);
     } while (jug != inicio);
@@ -661,14 +835,9 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 			else printf("\n\n");
 			
 			mostrarMano(actual->mano);
-			printf("\nFichas: %d | Apuesta actual: %d | Apuesta máxima: %d\n", actual->fichas, actual->apuesta, apuestaMax);
-
-			if (actual->hizoRiseCall){
-				if (actual->apuesta == apuestaMax){
-					printf("Opciones: [1] Pasar (check) [2] Retirarse (fold)\n");
-				} else {
-					printf("Opciones: [1] Igualar (call) [2] Retirarse (fold)\n");
-				}
+			printf("\nFichas: %d | Apuesta actual: %d | Apuesta máxima: %d\n\nOPCIONES\n", actual->fichas, actual->apuesta, apuestaMax);
+			if (actual->hizoRiseCall || actual->fichas <= apuestaMax){
+				printf("[1] Call | [2] Fold\n");
 
 				do {
 					printf("Elige una opción: ");
@@ -684,15 +853,15 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 						break;
 
 					case 2: // Fold
-						fold(actual, &jugadoresPendientes, partida, &salir, inicio);
+						fold(actual, &jugadoresPendientes, partida, &salir);//, inicio);
 						break;
 				}
 			}
 			else{
 				if (actual->apuesta == apuestaMax) {
-					printf("Opciones: [1] Pasar (check) [2] Subir (raise) [3] Retirarse (fold)\n");
+					printf("[1] Check | [2] Raise | [3] Fold\n");
 				} else {
-					printf("Opciones: [1] Igualar (call) [2] Subir (raise) [3] Retirarse (fold)\n");
+					printf("[1] Call [2] Raise [3] Fold\n");
 				}
 
 				do {
@@ -710,51 +879,27 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 
 					case 2: // Raise
 						raise(actual, &apuestaMax, partida, &jugadoresPendientes, inicio, &cantidad, jug);
-						
-						/*printf("¿Cuánto quieres subir? (mínimo %d): ", apuestaMax - actual->apuesta + 1);
-						scanf("%d", &cantidad);
-						if (cantidad > actual->fichas) cantidad = actual->fichas;
-						actual->fichas -= cantidad;
-						actual->apuesta += cantidad;
-						partida->mesa.bote += cantidad;
-						apuestaMax = actual->apuesta;
-						printf("%s sube la apuesta a %d.\n", actual->nombre, actual->apuesta);
-
-						// Reabrir ronda: todos deben responder al nuevo raise excepto quien lo hizo y los retirados
-						jug = clist_first(partida->jugadores);
-						Jugador *inicio2 = jug;
-						do {
-							if (jug != actual && strcmp(jug->estado, "Jugando") == 0 && jug->fichas > 0)
-								jug->yaActuo = 0;
-							jug = clist_next(partida->jugadores);
-						} while (jug != inicio2);
-						actual->yaActuo = 1;
-						jugadoresPendientes = contarJugadoresPendientes(partida->jugadores, actual);
-						inicio = actual;*/
 						break;
 						
 
 					case 3: // Fold
-						fold(actual, &jugadoresPendientes, partida, &salir, inicio);
+						fold(actual, &jugadoresPendientes, partida, &salir);//), inicio);
 						break;
 				}
 			}
 			
 		}
 		// Avanza al siguiente jugador circularmente
-		//actual = clist_next(partida->jugadores);
-		//if (actual != inicio) break;
-		
 		do {
 			actual = clist_next(partida->jugadores);
 		} while ((strcmp(actual->estado, "Retirado") == 0 ||actual->fichas == 0 || actual->yaActuo) && actual != inicio);
-		
+		presioneTeclaParaContinuar();
 		limpiarPantalla();
 	}
 	
 
     // Reinicia apuestas para la siguiente ronda
-    
+
 	jug = clist_first(partida->jugadores);
     inicio = jug;
     do {
@@ -763,6 +908,102 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
         jug = clist_next(partida->jugadores);
     } while (jug != inicio);
 	
+}
+
+void moverIzquierdaBoton(Partida *partida){
+	
+	Jugador *boton = clist_first(partida->jugadores);
+	Jugador *inicio = boton;
+
+	while(boton != partida->jugadorBoton){
+		boton = clist_next(partida->jugadores);
+		if(boton == inicio) break;
+	}
+	
+	do{
+		boton = clist_next(partida->jugadores);
+		if (strcmp(boton->estado, "Jugando") || boton->fichas != 0 )
+		{	
+			partida->siguienteApuesta = boton;
+			break;
+		}
+
+	} while(boton != partida->jugadorBoton);
+
+	
+
+	//Jugador *actual = clist_first(partida->jugadores);
+    //inicio = actual;
+	//while (actual != partida->siguienteApuesta){
+	/*	actual = clist_next(partida->jugadores);
+		if (actual == inicio) break;
+	}*/
+
+}
+
+void eliminarJugadores(CList *jugadores) // hacer posible mapa hash
+{
+	Jugador *jug = clist_first(jugadores);
+	Jugador *inicio = jug;
+	do{
+		
+		if ( jug->fichas == 0 )
+		{
+			strcpy(jug->estado, "Eliminado");
+		}
+		jug = clist_next(jugadores);
+	} while ( jug != inicio );
+}
+
+void funcionTrampa(Partida *partida){
+	Carta carta;
+	//1 JUG
+	strcpy(carta.valor,"A");
+	strcpy(carta.color,"diamantes");
+	partida->baraja.cartas[0] = carta;
+
+	strcpy(carta.valor,"K");
+	strcpy(carta.color,"corazones");
+	partida->baraja.cartas[1] = carta;
+
+	//2 JUG
+	strcpy(carta.valor,"9");
+	strcpy(carta.color,"corazones");
+	partida->baraja.cartas[2] = carta;
+
+	strcpy(carta.valor,"8");
+	strcpy(carta.color,"corazones");
+	partida->baraja.cartas[3] = carta;
+
+	//3 JUG
+	strcpy(carta.valor,"4");
+	strcpy(carta.color,"corazones");
+	partida->baraja.cartas[4] = carta;
+
+	strcpy(carta.valor,"K");
+	strcpy(carta.color,"picas");
+	partida->baraja.cartas[5] = carta;
+
+	//MESA
+	strcpy(carta.valor,"J");
+	strcpy(carta.color,"corazones");
+	partida->baraja.cartas[6] = carta;
+
+	strcpy(carta.valor,"10");
+	strcpy(carta.color,"corazones");
+	partida->baraja.cartas[7] = carta;
+
+	strcpy(carta.valor,"Q");
+	strcpy(carta.color,"corazones");
+	partida->baraja.cartas[8] = carta;
+
+	strcpy(carta.valor,"7");
+	strcpy(carta.color,"tréboles");
+	partida->baraja.cartas[9] = carta;
+
+	strcpy(carta.valor,"2");
+	strcpy(carta.color,"picas");
+	partida->baraja.cartas[10] = carta;
 }
 
 void iniciarRonda(Partida *partida, int IArand){
@@ -798,40 +1039,50 @@ void iniciarRonda(Partida *partida, int IArand){
 	
 	//ahora (culpa anselmo)
 	barajarCartas(&partida->baraja); // Barajar cartas
+
+	funcionTrampa(partida);
 	repartirCartas(partida);
 	rondaDeApuestas(partida);//agregar IArand dsp
 	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){
 		mostrarGandorFold(partida);
+		limpiarManos(partida);
 		return;
 	}	//foldearon
-	//mover a laizquierda del boton
+	moverIzquierdaBoton(partida);//mover a la izquierda del boton
 
 	crearFlop(partida); //(3 cartas)
 	rondaDeApuestas(partida);
 	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){
 		mostrarGandorFold(partida);
+		limpiarManos(partida);
 		return;
 	}	//foldearon
 	//mover a laizquierda del boton
+	moverIzquierdaBoton(partida);
 
 	crearTurn(partida); //(1 carta)
 	rondaDeApuestas(partida);
 	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){
 		mostrarGandorFold(partida);
+		limpiarManos(partida);
 		return;
 	}	//foldearon
 	//mover a laizquierda del boton
+	moverIzquierdaBoton(partida);
 
 	crearRiver(partida); //(1 carta)
 	rondaDeApuestas(partida); //final
 	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){
 		mostrarGandorFold(partida);
+		limpiarManos(partida);
 		return;
 	}	//foldearon
-	printf("TERMINO\n\n");
+	printf("LLEGAN AL SHOWDOWN\n\n");
 
-	//definirGanador(&partida);
-	//eliminarJugadores()
+	definirGanador(partida);
+	limpiarManos(partida); 
+
+	eliminarJugadores(partida->jugadores);
 	
 }
 
@@ -904,27 +1155,7 @@ void iniciarPartida(int IArand){
 	iniciarRonda(&partida, IArand);
 
 }
-/*
-int todosFold(Partida partida)
-{
-	Jugador *jug = clist_first(partida.jugadores);
-	Jugador *inicio = jug;
-	int totaljug = partida.numJugadores - 1;
-	int totalret = 0;
-	do{
-		
-		if ( strcmp(jug->estado, "Retirado") )
-		{
-			totalret++;
-		}
-		if ( totalret == totaljug )
-		{
-			return 1;
-		}
-		jug = clist_next(jugadores);
-	} while ( jug != inicio );
-	return 0;
-}*/
+
 
 /*
 void definirGanadorPARTIDA(Partida partida) //incompleto
@@ -945,37 +1176,26 @@ void definirGanadorPARTIDA(Partida partida) //incompleto
 	printf("¡%c es el ganador definitivo!", best->nombre )
 }
 */
-void eliminarJugadores(CList *jugadores) // hacer posible mapa hash
-{
-	Jugador *jug = clist_first(jugadores);
-	Jugador *inicio = jug;
-	do{
-		
-		if ( jug->fichas == 0 )
-		{
-			strcpy(jug->estado, "Eliminado");
-		}
-		jug = clist_next(jugadores);
-	} while ( jug != inicio );
-}
 
-void intro(){
+
+void intro(int timeset){
+	limpiarPantalla();
     printf("\n");
 
     printf("  ____   ___   _  __ _____ ____  \n");
-    Sleep(300); // 300 ms, funcionde <windows.h>
+    Sleep(timeset); // 300 ms, funcionde <windows.h>
 
     printf(" |  _ \\ / _ \\ | |/ /| ____|  _ \\ \n");
-    Sleep(300);
+    Sleep(timeset);
 
     printf(" | |_) | | | || ' / |  _| | |_) |\n");
-    Sleep(300);
-
+    Sleep(timeset);
+	
     printf(" |  __/| |_| || . \\ | |___|  _ < \n");
-    Sleep(300);
+    Sleep(timeset);
 
     printf(" |_|    \\___/ |_|\\_\\|_____|_| \\_\\\n");
-    Sleep(3000); //300
+    Sleep(timeset*3); //300
 
     printf("\n\n");
 }
@@ -984,7 +1204,7 @@ int main(){
 	SetConsoleOutputCP(CP_UTF8); //gracias compañero de telegram
 
 	limpiarPantalla();
-	//intro();
+	//intro(300));
 	limpiarPantalla();
 	int IArand;
 
@@ -1017,9 +1237,6 @@ int main(){
 			{
 				IArand = 0;
 			}
-
-			//mostrarCartas(&baraja);
-			//barajarCartas(&baraja);
 			break;
 		default:
 			printf("Opción no válida\n");
