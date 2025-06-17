@@ -315,27 +315,27 @@ void mostrarTipoMano(TipoMano tipo) {
     }
 }
 
-void mostrarPinta(Carta carta)
+void mostrarCarta(Carta carta)
 {
 	if(strcmp(carta.color, "corazones") == 0) // son iguales
 	{ 
-		printf(" ♥️");
+		printf("\033[1;31m%s ♥\033[0m", carta.valor);
 		return;
 	}
 
 	if(strcmp(carta.color, "diamantes") == 0)
 	{ 
-		printf(" ♦️");
+		printf("\033[1;34m%s ♦\033[0m", carta.valor);
 		return;
 	}
 	
 	if(strcmp(carta.color, "picas") == 0)
 	{ 
-		printf(" ♠️");
+		printf("\033[5;90m%s ♠\033[0m", carta.valor);
 		return;
 	}
 	
-	printf(" ♣️");
+	printf("\033[1;32m%s ♣\033[0m", carta.valor);
 	
 }
 
@@ -343,8 +343,8 @@ void mostrarCartasJugador(Jugador *jugador) {
     printf("%s: ", jugador->nombre);
     Carta *carta = list_first(jugador->mano);
     while (carta != NULL) {
-        printf("%s de %s", carta->valor, carta->color);
-		mostrarPinta(*carta);
+        //printf("%s", carta->valor);
+		mostrarCarta(*carta);
 		printf("   ");
         carta = list_next(jugador->mano);
     }
@@ -369,8 +369,8 @@ void mostrarMesa(Mesa mesa)
 	
 	for(int k = 0 ; k < mesa.total; k++)
 	{
-		printf("Carta [%d]: %s %s", k+1, mesa.cartas[k].valor, mesa.cartas[k].color);
-		mostrarPinta(mesa.cartas[k]);
+		printf("Carta [%d]: ", k+1);//, mesa.cartas[k].valor);
+		mostrarCarta(mesa.cartas[k]);
 		printf("\n");
 	}
 	
@@ -627,8 +627,8 @@ void mostrarMano(List *mano){
 
 	printf("Tus cartas:\n");
 	while(carta){
-		printf("%s de %s", carta->valor, carta->color);
-		mostrarPinta(*carta);
+		//printf("%s", carta->valor);
+		mostrarCarta(*carta);
 		printf("\n");
 		carta = list_next(mano);
 	}
@@ -834,7 +834,7 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 			if (actual == partida->jugadorCiegaMayor) printf("CIEGA MAYOR\n\n");
 			else printf("\n\n");
 			
-			mostrarMano(actual->mano);
+			if (!actual->esBot) mostrarMano(actual->mano);
 			printf("\nFichas: %d | Apuesta actual: %d | Apuesta máxima: %d\n\nOPCIONES\n", actual->fichas, actual->apuesta, apuestaMax);
 			if (actual->hizoRiseCall || actual->fichas <= apuestaMax){
 				printf("[1] Call | [2] Fold\n");
@@ -929,15 +929,6 @@ void moverIzquierdaBoton(Partida *partida){
 		}
 
 	} while(boton != partida->jugadorBoton);
-
-	
-
-	//Jugador *actual = clist_first(partida->jugadores);
-    //inicio = actual;
-	//while (actual != partida->siguienteApuesta){
-	/*	actual = clist_next(partida->jugadores);
-		if (actual == inicio) break;
-	}*/
 
 }
 
@@ -1040,7 +1031,7 @@ void iniciarRonda(Partida *partida, int IArand){
 	//ahora (culpa anselmo)
 	barajarCartas(&partida->baraja); // Barajar cartas
 
-	funcionTrampa(partida);
+	//funcionTrampa(partida);
 	repartirCartas(partida);
 	rondaDeApuestas(partida);//agregar IArand dsp
 	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){
@@ -1213,7 +1204,7 @@ int main(){
 		puts("========================================");
 		puts("           ♠️  ♥️  Poker  ♦️  ♣️");
 		puts("========================================");
-
+		printf("| \033[5;90m7 ♠ \033[0m| \033[1;31m 7 ♥ \033[0m| \033[1;32m ♣ 7 \033[0m| \033[1;34m 7 ♦\033[0m |\n");
 		puts("1) Iniciar Partida");
 		puts("2) Salir");
 		puts("3) Activar IArand");
