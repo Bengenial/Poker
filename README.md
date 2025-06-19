@@ -44,5 +44,5 @@ Top	Nombre en español	Nombre en inglés	Descripción	Ejemplo	Combinaciones Posi
 
 Todos deben tener dos cartas al inicio.
 
-gcc tdas/*.c poker.c -Wno-unused-result -o poker
+gcc tdas/*.c tdasPoker/* poker.c -Wno-unused-result -o poker
 ./poker

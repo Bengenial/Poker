@@ -7,6 +7,9 @@
         "clist.h": "c",
         "heap.h": "c",
         "extra.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "estructuras.h": "c",
+        "accionesjugador.h": "c",
+        "motorprincipal.h": "c"
     }
 }
