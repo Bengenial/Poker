@@ -14,77 +14,8 @@
 #include "tdasPoker/accionesJugador.h"
 #include "tdasPoker/visualizacion.h"
 #include "tdasPoker/motorPrincipal.h"
-//#include "tdasPoker/funcionesnormal.h"
-// id
 
 // -----------------------------------------------------------------------
-
-/*Accion tomarDecisiones(ManoEvaluada manoActual, int apuestaActual)
-{	
-	//Tener en cuenta que la IA es lo más basico, osea va a ser predesible (por el momento...)
-	
-	if(mano.puntuacion < 1500000) //numero por definirse, pero es un ejemplo
-	{ //pesima mano
-	 	if(apuestaActual > 0) return ACCION_FOLD; //en este caso si aumentan la apuesta, me retiro (fold)
-		else return ACCION_CHECK; si no aumentan la apuesta, chekeamos (seguimos)
-	}
-
-	else{
-		if(mano.puntuacion < 30000000)
-		{ //mano decente
-		 if(apuestaActual > 0) return ACCION_CALL; //ya que tiene una mano decente, puede permitirse igualar la apuesta
-		 else return ACCION_CHECK;
-		}
-		else{ //si tiene una muy buena mano
-			return ACCION_RAISE; va a aumentar la apuesta
-		}
-	}
-}*/
-
-/*	//Esto va dentro de la ronda de apuestas, en caso de que sea bot y en que sea humano
-    //Por mientras lo dejo comentado mientras benjoid cocina
-typedef struct{
-	char nombre[50];
-	int fichas;
-	List *mano;
-	int esBot;
-	char estado[10]; //jugando, retirado, ganador
-	int apuesta;
-	int yaActuo;
-}Jugador;
-
-	Jugador *jugadorActual = partida->jugadores->actual;
-
-	do{
-		if(strcmp(jugadorActual->estado, "jugando") == 0 ) continue;// está jugando
-
-		if(jugadorActual->esBot){ // 1 si e sbot, osea, verdadero
-		Accion accionATomar = tomarDeciciones(jugadorActual->mano, jugadorActual->apuesta);
-			switch(accionATomar){
-				case ACCION_FOLD:
-					strcpy(jugadorActual->estado, "Retirado");
-					printf("%s se retira.\n", jugadorActual->nombre);
-					break;
-				case ACCION_CHECK:
-					printf("%s pasa.\n", jugadorActual->nombre);
-					break;
-				case ACCION_CALL:
-					//igualar apuesta
-					printf("%s iguala la apuesta.\n", jugadorActual->nombre);
-					break;
-				case ACCION_RAISE:
-					//aumentar apuesta (que sea pequeña, es de prueba)
-					printf("%s aumenta la apuesta.\n", jugadorActual->nombre);
-					break;
-			}
-		} else {
-			//jugador humano, pedirle que ingrese una accion
-			//mostrar mano, mesa, fichas, apuestas, etc.
-			//pedirle que ingrese una accion
-		}
-	}
-
-*/
 
 //posible cosa o no c xd, hola benjoid owo
 

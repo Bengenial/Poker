@@ -96,14 +96,25 @@ void checkOrCall(Jugador *jugadorActual, int apuestaActual, Partida *partida, in
 }
 
 void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPendientes, Jugador *inicio, int  *cantidad, Jugador *jug){
-	printf("¿Cuánto quieres subir? (mínimo %d): ", (*apuestaMax) - actual->apuesta + 1);
-	scanf("%d", &(*cantidad));
+	if(!actual->esBot){
+		printf("¿Cuánto quieres subir? (mínimo %d): ", (*apuestaMax) - actual->apuesta + 1);
+		scanf("%d", cantidad);
+
+	}
+	else{
+		//Por ahora solo va a subir 10
+		int cantidadAAnadir = (*apuestaMax + 10) - actual->apuesta;
+		(*cantidad) = cantidadAAnadir;
+	}
+
 	if ((*cantidad) > actual->fichas) (*cantidad) = actual->fichas;
+
 	actual->fichas -= (*cantidad);
 	actual->apuesta += (*cantidad);
 	partida->mesa.bote += (*cantidad);
 	(*apuestaMax) = actual->apuesta;
 	actual->hizoRiseCall = 1;
+
 	printf("%s sube la apuesta a %d.\n", actual->nombre, actual->apuesta);
 	if (actual->fichas == 0) printf("%s va all-in\n", actual->nombre);
 
