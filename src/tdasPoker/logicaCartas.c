@@ -2,17 +2,11 @@
 #include <stdlib.h>
 #include "../tdas/list.h"
 #include "../tdas/clist.h"
-#include "../tdas/heap.h"
-#include "../tdas/extra.h"
-#include <string.h>
-#include <time.h>
-#include <windows.h>
 
 //Del poker
 #include "estructuras.h"
 #include "accionesJugador.h"
-#include "visualizacion.h"
-#include "motorPrincipal.h"
+
 
 //Funciones de la baraja en sí
 void intercambiarCartas(Carta *a, Carta *b){
@@ -22,7 +16,7 @@ void intercambiarCartas(Carta *a, Carta *b){
 }
 
 void leerCartas(Baraja *baraja){
-	FILE *archivo = fopen("data/cartas_poker.csv", "r");
+	FILE *archivo = fopen("src/data/cartas_poker.csv", "r");
 	if (archivo == NULL){
 		perror(
 			"Error al abrir el archivo"); // Informa si el archivo no puede abrirse

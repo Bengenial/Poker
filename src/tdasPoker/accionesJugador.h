@@ -1,20 +1,7 @@
 #ifndef ACCIONESJUGADOR_H
 #define ACCIONESJUGADOR_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "../tdas/list.h"
-#include "../tdas/clist.h"
-#include "../tdas/heap.h"
-#include "../tdas/extra.h"
-#include <string.h>
-#include <time.h>
-#include <windows.h>
-
 //Del poker
-#include "estructuras.h"
-#include "logicaCartas.h"
-#include "visualizacion.h"
 #include "motorPrincipal.h"
 
 //Gestion de jugadores

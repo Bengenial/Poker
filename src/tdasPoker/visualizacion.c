@@ -2,37 +2,42 @@
 #include <stdlib.h>
 #include "../tdas/list.h"
 #include "../tdas/clist.h"
-#include "../tdas/heap.h"
-#include "../tdas/extra.h"
-#include <string.h>
-#include <time.h>
+
+#define NOMINMAX         // Evita las macros min/max que chocan con las de C++
+#define WIN32_LEAN_AND_MEAN // Reduce el tamaño de windows.h
+#define NOGDI            // Evita la inclusión de funciones GDI, como la función Rectangle de Windows
+#define NOUSER           // Evita la inclusión de funciones de usuario, como CloseWindow y ShowCursor de Windows
 #include <windows.h>
+#include "raylib.h"
 
 //Del poker
 #include "estructuras.h"
-#include "logicaCartas.h"
 #include "accionesJugador.h"
-#include "motorPrincipal.h"
+
 
 void intro(int timeset){
 	limpiarPantalla();
     printf("\n");
 
     printf("  ____   ___   _  __ _____ ____  \n");
-    Sleep(timeset); // 300 ms, funcion de <windows.h>
+	Sleep(timeset);
+    //Sleep(timeset); // 300 ms, funcion de <windows.h>
 
     printf(" |  _ \\ / _ \\ | |/ /| ____|  _ \\ \n");
-    Sleep(timeset);
+    //Sleep(timeset);
+	Sleep(timeset);
 
     printf(" | |_) | | | || ' / |  _| | |_) |\n");
-    Sleep(timeset);
-	
+    //Sleep(timeset);
+	Sleep(timeset);
+
     printf(" |  __/| |_| || . \\ | |___|  _ < \n");
-    Sleep(timeset);
+    //Sleep(timeset);
+	Sleep(timeset);
 
     printf(" |_|    \\___/ |_|\\_\\|_____|_| \\_\\\n");
-    Sleep(timeset*3); //300
-
+    //Sleep(timeset*3); //300
+	Sleep(timeset * 3);
     printf("\n\n");
 }
 

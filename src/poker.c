@@ -2,11 +2,17 @@
 #include <stdlib.h>
 #include "tdas/list.h"
 #include "tdas/clist.h"
-#include "tdas/heap.h"
 #include "tdas/extra.h"
 #include <string.h>
 #include <time.h>
+
+#define NOMINMAX         // Evita las macros min/max que chocan con las de C++
+#define WIN32_LEAN_AND_MEAN // Reduce el tamaño de windows.h
+#define NOGDI            // Evita la inclusión de funciones GDI, como la función Rectangle de Windows
+#define NOUSER           // Evita la inclusión de funciones de usuario, como CloseWindow y ShowCursor de Windows
 #include <windows.h>
+#include "raylib.h"
+
 
 //Del poker
 #include "tdasPoker/estructuras.h"
@@ -14,6 +20,7 @@
 #include "tdasPoker/accionesJugador.h"
 #include "tdasPoker/visualizacion.h"
 #include "tdasPoker/motorPrincipal.h"
+#include "tdasPoker/ventana.h"
 
 // -----------------------------------------------------------------------
 
@@ -41,8 +48,6 @@ void definirGanadorPARTIDA(Partida partida) //incompleto
 }
 */
 
-
-
 int main(){
 	SetConsoleOutputCP(CP_UTF8); //gracias compañero de telegram
 
@@ -69,7 +74,7 @@ int main(){
 		switch (opcion){
 		case '1':
 			iniciarPartida(IArand);
-
+			
 			break;
 		case '3':
 			//ahora es un toggle, será usado para que la IA no haga siempre las mejores decisiones. 

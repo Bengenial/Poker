@@ -2,19 +2,23 @@
 #include <stdlib.h>
 #include "../tdas/list.h"
 #include "../tdas/clist.h"
-#include "../tdas/heap.h"
 #include "../tdas/extra.h"
-#include <string.h>
-#include <time.h>
+
+#define NOMINMAX         // Evita las macros min/max que chocan con las de C++
+#define WIN32_LEAN_AND_MEAN // Reduce el tamaño de windows.h
+#define NOGDI            // Evita la inclusión de funciones GDI, como la función Rectangle de Windows
+#define NOUSER           // Evita la inclusión de funciones de usuario, como CloseWindow y ShowCursor de Windows
 #include <windows.h>
 
 //Del poker
+#include "accionesJugador.h"
+#include "ventana.h"
 #include "estructuras.h"
 #include "logicaCartas.h"
-#include "accionesJugador.h"
 #include "visualizacion.h"
 
 //Funciones Auxiliares
+
 void combinarCartasJugador(List *manoJugador, Mesa mesa, Carta cartasCombinadas[]){
 	int index = 0;
 	Carta *carta = list_first(manoJugador);
@@ -435,9 +439,8 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 				}
 
 
-
-				
-				Sleep(1500); //pequeña pausa para similar que pienza xd
+				Sleep(1500);
+				//Sleep(1500); //pequeña pausa para similar que pienza xd
 
 				//Armamos y evaluamos la mano del bot
 				Carta cartasCombinadas[7]; //entender bien esto, sale en definir ganador
@@ -637,6 +640,8 @@ void iniciarPartida(int IArand){
     } while (jug != inicio);
 
 	//antes iniciarRonda(partida,IArand);
+
+	iniciarVentana(&partida);
 	iniciarRonda(&partida, IArand);
 
 }

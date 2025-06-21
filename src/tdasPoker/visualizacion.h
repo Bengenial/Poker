@@ -2,14 +2,19 @@
 #define VISUALIZACION_H
 
 #include <stdio.h>
-#include <stdlib.h>
+
 #include "../tdas/list.h"
 #include "../tdas/clist.h"
-#include "../tdas/heap.h"
 #include "../tdas/extra.h"
-#include <string.h>
+
 #include <time.h>
+
+#define NOMINMAX         // Evita las macros min/max que chocan con las de C++
+#define WIN32_LEAN_AND_MEAN // Reduce el tamaño de windows.h
+#define NOGDI            // Evita la inclusión de funciones GDI, como la función Rectangle de Windows
+#define NOUSER           // Evita la inclusión de funciones de usuario, como CloseWindow y ShowCursor de Windows
 #include <windows.h>
+#include "raylib.h"
 
 //Del poker
 #include "estructuras.h"

@@ -1,9 +1,6 @@
 #ifndef ESTRUCTURAS_H
 #define ESTRUCTURAS_H
 
-#include "../tdas/list.h"
-#include "../tdas/clist.h"
-
 typedef struct {
     int id;
     char color[10];
