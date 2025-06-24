@@ -3,22 +3,17 @@
 #include "../tdas/list.h"
 #include "../tdas/clist.h"
 #include "../tdas/extra.h"
-
-#define NOMINMAX         // Evita las macros min/max que chocan con las de C++
-#define WIN32_LEAN_AND_MEAN // Reduce el tamaño de windows.h
-#define NOGDI            // Evita la inclusión de funciones GDI, como la función Rectangle de Windows
-#define NOUSER           // Evita la inclusión de funciones de usuario, como CloseWindow y ShowCursor de Windows
+#include <string.h>
+#include <time.h>
 #include <windows.h>
 
 //Del poker
-#include "accionesJugador.h"
-#include "ventana.h"
 #include "estructuras.h"
 #include "logicaCartas.h"
+#include "accionesJugador.h"
 #include "visualizacion.h"
 
 //Funciones Auxiliares
-
 void combinarCartasJugador(List *manoJugador, Mesa mesa, Carta cartasCombinadas[]){
 	int index = 0;
 	Carta *carta = list_first(manoJugador);
@@ -156,7 +151,7 @@ void moverIzquierdaBoton(Partida *partida){
 	
 	do{
 		boton = clist_next(partida->jugadores);
-		if (strcmp(boton->estado, "Jugando") || boton->fichas != 0 )
+		if (strcmp(boton->estado, "Jugando") == 0 && boton->fichas > 0 )
 		{	
 			partida->siguienteApuesta = boton;
 			break;
@@ -269,7 +264,7 @@ void limpiarManos(Partida *partida){
 	} while(jug != inicio);
 }
 
-Accion tomarDecisiones(ManoEvaluada manoActual, int apuestaActual, int apuestaMax)
+/*Accion tomarDecisiones(ManoEvaluada manoActual, int apuestaActual, int apuestaMax)
 {	
 	//Tener en cuenta que la IA es lo más basico, osea va a ser predesible (por el momento...)
 	if(apuestaActual < apuestaMax){
@@ -291,7 +286,63 @@ Accion tomarDecisiones(ManoEvaluada manoActual, int apuestaActual, int apuestaMa
 			return ACCION_RAISE; //va a aumentar la apuesta
 		}
 	}
+}*/
+
+// VERSIÓN MEJORADA DE LA IA CON LÓGICA PRE-FLOP Y POST-FLOP
+static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax)
+{
+    int apuestaActual = jugadorActual->apuesta;
+    ManoEvaluada manoEvaluada;
+
+    // --- LÓGICA PRE-FLOP (cuando no hay cartas en la mesa) ---
+    if (partida->mesa.total == 0) {
+        Carta *c1 = list_first(jugadorActual->mano);
+        Carta *c2 = list_next(jugadorActual->mano);
+        int val1 = obtenerValorCarta(c1->valor);
+        int val2 = obtenerValorCarta(c2->valor);
+
+        // Nivel 1: Manos Premium (Pares Altos, AKs, AQs) -> Siempre sube o resube
+        if ((val1 == val2 && val1 >= 11) || (val1 >= 13 && val2 >= 12 && strcmp(c1->color, c2->color) == 0)) {
+            return ACCION_RAISE;
+        }
+        // Nivel 2: Manos Buenas (Pares Medios, Conectores del mismo palo) -> Paga apuestas normales
+        else if ((val1 == val2 && val1 >= 7) || (val1 >= 10 && val2 >= 9 && strcmp(c1->color, c2->color) == 0)) {
+            if (apuestaActual < apuestaMax) return ACCION_CALL; // Paga si hay subida
+            else return ACCION_CHECK; // Pasa si no la hay
+        }
+        // Nivel 3: Manos Especulativas -> Paga solo si la apuesta es barata (la ciega)
+        else {
+            if (apuestaActual < apuestaMax) {
+                if (apuestaMax <= 10) return ACCION_CALL; // Paga la ciega
+                else return ACCION_FOLD; // Se retira ante una subida de verdad
+            } else {
+                return ACCION_CHECK;
+            }
+        }
+    }
+    // --- LÓGICA POST-FLOP (cuando ya hay cartas en la mesa) ---
+    else {
+        Carta cartasCombinadas[7];
+        combinarCartasJugador(jugadorActual->mano, partida->mesa, cartasCombinadas);
+        manoEvaluada = evaluarMano(cartasCombinadas, 2 + partida->mesa.total);
+
+        // La lógica que ya habíamos mejorado
+        if (apuestaActual < apuestaMax) { // Alguien subió
+            int diferencia = apuestaMax - apuestaActual;
+            if (manoEvaluada.puntuacion >= 3000000) return ACCION_RAISE; // Trío o mejor: resube
+            else if (manoEvaluada.puntuacion >= 1000000) { // Par o Dos Pares
+                if (diferencia <= 50) return ACCION_CALL; // Paga si no es caro
+                else return ACCION_FOLD;
+            } else {
+                return ACCION_FOLD; // Nada: retírate
+            }
+        } else { // Nadie ha subido
+            if (manoEvaluada.puntuacion >= 2000000) return ACCION_RAISE; // Dos Pares o mejor: apuesta
+            else return ACCION_CHECK; // Peor que eso: pasa
+        }
+    }
 }
+
 
 void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
     int apuestaMax = obtenerApuestaMaxima(partida->jugadores);
@@ -439,16 +490,17 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 				}
 
 
-				Sleep(1500);
-				//Sleep(1500); //pequeña pausa para similar que pienza xd
-
-				//Armamos y evaluamos la mano del bot
+				Sleep(1500); //pequeña pausa para similar que pienza xd
+				/*//Armamos y evaluamos la mano del bot
 				Carta cartasCombinadas[7]; //entender bien esto, sale en definir ganador
 				combinarCartasJugador(actual->mano, partida->mesa, cartasCombinadas);
 				ManoEvaluada manoBot = evaluarMano(cartasCombinadas, 2 + partida->mesa.total);
 
 				//Ocupamos la funcion definitiva de la IA :D(mentira es super basica xd)
-				Accion accionBot = tomarDecisiones(manoBot, actual->apuesta, apuestaMax);
+				Accion accionBot = tomarDecisiones(manoBot, actual->apuesta, apuestaMax);*/
+
+				//Ocupamos la funcion definitiva de la IA :D(mentira es super basica xd)
+				Accion accionBot = tomarDecisiones(partida, actual, apuestaMax);
 
 				//Vemos lo que la IA decidio...
 				switch (accionBot)
@@ -479,6 +531,7 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 		} while ((strcmp(actual->estado, "Retirado") == 0 ||actual->fichas == 0 || actual->yaActuo) && actual != inicio);
 		presioneTeclaParaContinuar();
 		limpiarPantalla();
+
 	}
 	
 
@@ -628,21 +681,40 @@ void iniciarPartida(int IArand){
 	Jugador *jug = siguienteApuesta;
     Jugador *inicio = jug;
 
-    do {
-        printf("JUGADOR = %s es ", jug->nombre);
-		if(jug == partida.jugadorBoton) printf("BOTON\n");
-		else if (jug == partida.jugadorCiegaMayor) printf("CIEGA MAYOR\n");
-		else if (jug == partida.jugadorCiegaMenor) printf("CIEGA MENOR\n");
-		else if (jug == partida.siguienteApuesta) printf("EMPIEZA\n");
-		else printf("NORMAL\n");
-
-		jug = clist_next(partida.jugadores);
-    } while (jug != inicio);
+    
 
 	//antes iniciarRonda(partida,IArand);
+	do{	
 
-	//iniciarVentana();
-	iniciarRonda(&partida, IArand);
+		//1.-En cada ronda aumentar las ciegas (menor y mayor) 
+		//2.-Si el jugador, mostrar directamente el ganador
+
+		printf("\n\n=============\nRonda numero : %d\n=============\n\n", partida.ronda);
+		do {
+			printf("JUGADOR = %s es ", jug->nombre);
+			if(jug == partida.jugadorBoton) printf("BOTON\n");
+			else if (jug == partida.jugadorCiegaMayor) printf("CIEGA MAYOR\n");
+			else if (jug == partida.jugadorCiegaMenor) printf("CIEGA MENOR\n");
+			else if (jug == partida.siguienteApuesta) printf("EMPIEZA\n");
+			else printf("NORMAL\n");
+
+			jug = clist_next(partida.jugadores);
+		} while (jug != inicio);
+
+		//Inicia la ronda omg
+		iniciarRonda(&partida, IArand);
+		boton = clist_next(partida.jugadores); // Botón
+    	ciegaMenor = clist_next(partida.jugadores); // Ciega menor
+    	ciegaMayor = clist_next(partida.jugadores); // Ciega mayor
+    	siguienteApuesta = clist_next(partida.jugadores); // Primer jugador en hablar preflop
+
+		partida.jugadorBoton = boton;
+		partida.jugadorCiegaMenor = ciegaMenor;
+		partida.jugadorCiegaMayor = ciegaMayor;
+		partida.siguienteApuesta = siguienteApuesta; //parte
+
+		partida.ronda++;
+	}while(partida.numJugadores > 1);
 
 }
 
