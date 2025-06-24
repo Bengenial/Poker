@@ -63,10 +63,5 @@ typedef struct {
     int ronda;
 } Partida;
 
-typedef struct {
-    Carta cartas[7];
-    int numCartas;
-    ManoEvaluada mejorMano;
-} GrafoMano;
 
 #endif

@@ -3,6 +3,6 @@
 
 #include "estructuras.h"
 
-void iniciarVentana(Partida *partida);
+void iniciarVentana();
 
 #endif

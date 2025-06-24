@@ -73,6 +73,7 @@ int main(){
 
 		switch (opcion){
 		case '1':
+			//iniciarVentana();
 			iniciarPartida(IArand);
 			
 			break;

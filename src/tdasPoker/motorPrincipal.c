@@ -641,7 +641,7 @@ void iniciarPartida(int IArand){
 
 	//antes iniciarRonda(partida,IArand);
 
-	iniciarVentana(&partida);
+	//iniciarVentana();
 	iniciarRonda(&partida, IArand);
 
 }

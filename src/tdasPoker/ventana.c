@@ -7,7 +7,7 @@
 
 
 
-void iniciarVentana(Partida *partida) {
+void iniciarVentana() {
     InitWindow(1400, 800, "Poker con fondo personalizado");
     Font fuente = LoadFont("assets/BucklaneScript.otf");
     Texture2D fondo1 = LoadTexture("assets/img1.png");
