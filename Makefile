@@ -1,6 +1,3 @@
-# Compilador
-CC = gcc
-
 # Carpetas
 SRC_DIR = src
 BUILD_DIR = build
@@ -11,30 +8,22 @@ LIB_DIR = lib
 CFLAGS = -I$(INCLUDE_DIR) -Wno-unused-result
 LDFLAGS = -L$(LIB_DIR) -lraylib -lopengl32 -lgdi32 -lwinmm
 
-# Archivos fuente (código principal + tdas)
-SRC_FILES = $(SRC_DIR)/poker.c \
+# Archivos fuente
+SRC_FILES = src/poker.c \
             $(wildcard $(SRC_DIR)/tdasPoker/*.c) \
             $(wildcard $(SRC_DIR)/tdas/*.c)
 
-# Ejecutable
+# Nombre del ejecutable
 OUT = $(BUILD_DIR)/poker.exe
 
 # Regla por defecto
-all: $(OUT)
-
-# Compilar
-$(OUT): $(SRC_FILES)
-	@echo 🛠 Compilando el juego de Poker Texas Hold'em...
-	@mkdir -p $(BUILD_DIR)
+all:
 	$(CC) $(SRC_FILES) -o $(OUT) $(CFLAGS) $(LDFLAGS)
-	@echo ✅ Compilación exitosa.
 
-# Ejecutar
+# Ejecutar el juego
 run: all
-	@echo 🚀 Ejecutando el juego...
 	./$(OUT)
 
-# Limpiar
+# Limpiar ejecutable
 clean:
-	@echo 🧹 Limpiando ejecutables...
-	@if exist $(BUILD_DIR) del /Q $(BUILD_DIR)\*.exe || true
+	del /Q $(BUILD_DIR)\*.exe
