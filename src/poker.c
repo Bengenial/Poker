@@ -11,7 +11,7 @@
 #define NOGDI            // Evita la inclusión de funciones GDI, como la función Rectangle de Windows
 #define NOUSER           // Evita la inclusión de funciones de usuario, como CloseWindow y ShowCursor de Windows
 #include <windows.h>
-#include "raylib.h"
+//#include "raylib.h"
 
 
 //Del poker
