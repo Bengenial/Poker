@@ -343,6 +343,110 @@ static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apue
     }
 }
 
+void logicaJugador(Jugador *actual, int apuestaMax, Partida *partida, int *jugadoresPendientes, int *salir, Jugador *inicio, int *cantidad, Jugador *jug) {
+    int opcion;
+    mostrarMano(actual->mano);
+    printf("\nFichas: %d | Apuesta actual: %d | Apuesta máxima: %d\n\nOPCIONES\n", actual->fichas, actual->apuesta, apuestaMax);
+    if (actual->hizoRiseCall || actual->fichas <= apuestaMax) {
+        printf("[1] Call | [2] Fold\n");
+        do {
+            printf("Elige una opción: ");
+            if (scanf("%d", &opcion) != 1) {
+                while (getchar() != '\n');
+                opcion = 0;
+            }
+        } while (opcion < 1 || opcion > 2);
+
+        switch (opcion) {
+            case 1: // check o call
+                checkOrCall(actual, apuestaMax, partida, jugadoresPendientes);
+                break;
+            case 2: // Fold
+                fold(actual, jugadoresPendientes, partida, salir);
+                break;
+        }
+    } else {
+        if (actual->apuesta == apuestaMax) {
+            printf("[1] Check | [2] Raise | [3] Fold\n");
+        } else {
+            printf("[1] Call [2] Raise [3] Fold\n");
+        }
+        do {
+            printf("Elige una opción: ");
+            if (scanf("%d", &opcion) != 1) {
+                while (getchar() != '\n');
+                opcion = 0;
+            }
+        } while (opcion < 1 || opcion > 3);
+
+        switch (opcion) {
+            case 1: // check o call
+                checkOrCall(actual, apuestaMax, partida, jugadoresPendientes);
+                break;
+            case 2: // Raise
+                raise(actual, &apuestaMax, partida, jugadoresPendientes, inicio, cantidad, jug);
+                break;
+            case 3: // Fold
+                fold(actual, jugadoresPendientes, partida, salir);
+                break;
+        }
+    }
+}
+
+void logicaBot(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPendientes, int *salir, Jugador *inicio, int *cantidad, Jugador *jug) {
+    printf("\nFichas: %d | Apuesta actual: %d | Apuesta máxima: %d\n\nOPCIONES\n", actual->fichas, actual->apuesta, *apuestaMax);
+    int num = (rand() % 10) + 1;
+
+    switch (num) {
+        case 1:
+            printf("%s esta pensando...\n", actual->nombre);
+            break;
+        case 2:
+            printf("%s se puso nervioso...\n", actual->nombre);
+            break;
+        case 3:
+            printf("%s esta contando sus fichas...\n", actual->nombre);
+            break;
+        case 4:
+            printf("%s se cree Brunoid (poker face)...\n", actual->nombre);
+            break;
+        case 5:
+            printf("%s esta sudando...\n", actual->nombre);
+            break;
+        case 6:
+            printf("%s estaba duermiendo...\n", actual->nombre);
+            break;
+        case 7:
+            printf("%s se distrajo...\n", actual->nombre);
+            break;
+        case 8:
+            printf("%s esta rezando...\n", actual->nombre);
+            break;
+        case 9:
+            printf("%s piensa en la colegiatura de sus hijos...\n", actual->nombre);
+            break;
+        case 10:
+            printf("%s no sabe cuanto whisky tomo...\n", actual->nombre);
+            break;
+    }
+
+    Sleep(1500); // Simula que el bot "piensa"
+
+    Accion accionBot = tomarDecisiones(partida, actual, *apuestaMax);
+
+    switch (accionBot) {
+        case ACCION_CHECK:
+        case ACCION_CALL:
+            checkOrCall(actual, *apuestaMax, partida, jugadoresPendientes);
+            break;
+        case ACCION_FOLD:
+            fold(actual, jugadoresPendientes, partida, salir);
+            break;
+        case ACCION_RAISE:
+            raise(actual, apuestaMax, partida, jugadoresPendientes, inicio, cantidad, jug);
+            break;
+    }
+}
 
 void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
     int apuestaMax = obtenerApuestaMaxima(partida->jugadores);
@@ -384,144 +488,12 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 			if (actual == partida->jugadorCiegaMayor) printf("CIEGA MAYOR\n\n");
 			else printf("\n\n");
 			
-			if (!actual->esBot) //SI es humano
-			{ 
-				mostrarMano(actual->mano);
-				printf("\nFichas: %d | Apuesta actual: %d | Apuesta máxima: %d\n\nOPCIONES\n", actual->fichas, actual->apuesta, apuestaMax);
-				if (actual->hizoRiseCall || actual->fichas <= apuestaMax){
-					printf("[1] Call | [2] Fold\n");
-
-					do {
-						printf("Elige una opción: ");
-						if (scanf("%d", &opcion) != 1) {
-							while (getchar() != '\n');
-							opcion = 0;
-						}
-					} while (opcion < 1 || opcion > 2);
-
-					switch (opcion) {
-						case 1: // check o call
-							checkOrCall(actual, apuestaMax, partida, &jugadoresPendientes);
-							break;
-
-						case 2: // Fold
-							fold(actual, &jugadoresPendientes, partida, &salir);//, inicio);
-							break;
-					}
-				}
+			if (!actual->esBot){ //Si es humano 
+				logicaJugador(actual, apuestaMax, partida, &jugadoresPendientes, &salir, inicio, &cantidad, jug);
 			
-				else{
-					if (actual->apuesta == apuestaMax) {
-						printf("[1] Check | [2] Raise | [3] Fold\n");
-					} else {
-						printf("[1] Call [2] Raise [3] Fold\n");
-					}
-
-					do {
-						printf("Elige una opción: ");
-						if (scanf("%d", &opcion) != 1) {
-							while (getchar() != '\n');
-							opcion = 0;
-						}
-					} while (opcion < 1 || opcion > 3);
-
-					switch (opcion) {
-						case 1: // check o call
-							checkOrCall(actual, apuestaMax, partida, &jugadoresPendientes);
-							break;
-
-						case 2: // Raise
-							raise(actual, &apuestaMax, partida, &jugadoresPendientes, inicio, &cantidad, jug);
-							break;
-							
-						case 3: // Fold
-							fold(actual, &jugadoresPendientes, partida, &salir);//), inicio);
-							break;
-					}
-				}
 			}
-			
 			else{ //si es bot
-
-				printf("\nFichas: %d | Apuesta actual: %d | Apuesta máxima: %d\n\nOPCIONES\n", actual->fichas, actual->apuesta, apuestaMax);
-				int num = (rand() % 10) +1;
-				
-				switch (num)
-				{
-					case 1:
-						printf("%s esta pensando...\n", actual->nombre);
-						break;
-
-					case 2:
-						printf("%s se puso nervioso...\n", actual->nombre);
-						break;
-					case 3:
-						printf("%s esta contando sus fichas...\n", actual->nombre);
-						break;
-
-					case 4:
-						printf("%s se cree Brunoid (poker face)...\n", actual->nombre);
-						break;
-
-					case 5:
-						printf("%s esta sudando...\n", actual->nombre);
-						break;
-
-					case 6:
-						printf("%s estaba duermiendo...\n", actual->nombre);
-						break;
-
-					case 7:
-						printf("%s se distrajo...\n", actual->nombre);
-						break;
-
-					case 8:
-						printf("%s esta rezando...\n", actual->nombre);
-						break;
-
-					case 9:
-						printf("%s piensa en la colegiatura de sus hijos...\n", actual->nombre);
-						break;
-
-					case 10:
-						printf("%s no sabe cuanto whisky tomo...\n", actual->nombre);
-						break;
-
-				}
-
-
-				Sleep(1500); //pequeña pausa para similar que pienza xd
-				/*//Armamos y evaluamos la mano del bot
-				Carta cartasCombinadas[7]; //entender bien esto, sale en definir ganador
-				combinarCartasJugador(actual->mano, partida->mesa, cartasCombinadas);
-				ManoEvaluada manoBot = evaluarMano(cartasCombinadas, 2 + partida->mesa.total);
-
-				//Ocupamos la funcion definitiva de la IA :D(mentira es super basica xd)
-				Accion accionBot = tomarDecisiones(manoBot, actual->apuesta, apuestaMax);*/
-
-				//Ocupamos la funcion definitiva de la IA :D(mentira es super basica xd)
-				Accion accionBot = tomarDecisiones(partida, actual, apuestaMax);
-
-				//Vemos lo que la IA decidio...
-				switch (accionBot)
-				{
-					case ACCION_CHECK:
-						checkOrCall(actual, apuestaMax, partida, &jugadoresPendientes);
-						break;
-					
-					case ACCION_CALL:
-						checkOrCall(actual, apuestaMax, partida, &jugadoresPendientes);
-						break;
-
-					case ACCION_FOLD:
-						fold(actual, &jugadoresPendientes, partida, &salir);
-						break;
-
-					case ACCION_RAISE:
-						raise(actual, &apuestaMax, partida, &jugadoresPendientes, inicio, &cantidad, jug);
-						break;
-				}
-
+				logicaBot(actual, &apuestaMax, partida, &jugadoresPendientes, &salir, inicio, &cantidad, jug);
 			}
 			
 		}
@@ -547,7 +519,7 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 	
 }
 
-void iniciarRonda(Partida *partida, int IArand){
+void iniciarRonda(Partida *partida){
 	int ciegaMayor = 10;
 	int ciegaMenor = 5;
 	partida->mesa.bote = 0;
@@ -627,12 +599,11 @@ void iniciarRonda(Partida *partida, int IArand){
 	
 }
 
-void iniciarPartida(int IArand){
+void iniciarPartida(){
 	char nombre[50];
 	int jugadores;
 	Partida partida;
 	//testeo de elecciones
-	IArand = 0;
 
 	partida.jugadores = clist_create();
 
@@ -702,7 +673,7 @@ void iniciarPartida(int IArand){
 		} while (jug != inicio);
 
 		//Inicia la ronda omg
-		iniciarRonda(&partida, IArand);
+		iniciarRonda(&partida);
 		boton = clist_next(partida.jugadores); // Botón
     	ciegaMenor = clist_next(partida.jugadores); // Ciega menor
     	ciegaMayor = clist_next(partida.jugadores); // Ciega mayor

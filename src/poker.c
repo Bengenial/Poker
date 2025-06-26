@@ -23,7 +23,6 @@ int main(){
 
 	limpiarPantalla();
 	//intro(300));
-	limpiarPantalla();
 	int IArand;
 
 	char opcion;
@@ -44,18 +43,13 @@ int main(){
 		switch (opcion){
 		case '1':
 			//iniciarVentana();
-			iniciarPartida(IArand);
+			iniciarPartida();
 			
 			break;
-		case '3':
+		case '2':
 			//ahora es un toggle, será usado para que la IA no haga siempre las mejores decisiones. 
-			if ( IArand = 0 )
-			{
-				IArand = 1;
-			} else
-			{
-				IArand = 0;
-			}
+			printf("Saliendo del juego...\n");
+			
 			break;
 		default:
 			printf("Opción no válida\n");

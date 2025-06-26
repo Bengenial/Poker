@@ -1,5 +1,311 @@
 # pokerTexasHoldem
 
+# Póker Texas Hold’em
+
+Este es un juego de póker en su modalidad Texas Hold’em, utilizando el lenguaje de programación C. La propuesta se presenta
+como una iniciativa destinada a la aplicación de conceptos avanzados de estructuras de datos y
+algoritmos en el desarrollo de una aplicación computacional interactiva y funcional. El propósito
+de este proyecto es simular una partida de póker completa, gestionando múltiples jugadores (tanto
+humanos como controlados por el ordenador), rondas de apuestas, la lógica de las manos y la
+distribución de premios
+
+## Descripción
+
+Para enriquecer la experiencia de juego, esta aplicación de póker Texas Hold’em cuenta con dos
+modalidades de interacción. Se mantiene la interfaz de consola basada en texto, que permite un
+control directo y rápido del juego contra oponentes de IA mediante comandos sencillos. A esta se
+suma una nueva interfaz gráfica de usuario (GUI), diseñada para ser más intuitiva y visualmente
+atractiva. Esta GUI facilita la inmersión en el juego, ya que representa la mesa, las cartas y las
+acciones a través de botones y elementos gráficos, y hace que la aplicación sea más accesible y
+fácil de usar para el jugador.
+Cada Partida sigue el flujo de:
+
+ a. Iniciar una nueva ronda y pagar las apuestas ciegas (blinds).
+ b. Barajar el mazo y repartir dos cartas a cada jugador.
+ c. Primera ronda de apuestas (pre-flop).
+ d. Mostrar el Flop (las primeras 3 cartas comunitarias).
+ e. Segunda ronda de apuestas.
+ f. Mostrar el Turn (la cuarta carta comunitaria).
+ g. Tercera ronda de apuestas.
+ h. Mostrar el River (la quinta y última carta comunitaria).
+ i. Ronda de apuestas final.
+ j. Showdown: determinar el ganador, mostrar las manos y repartir el bote.
+ k. Verificar y eliminar jugadores sin fichas.
+ l. Mover el botón del dealer y las ciegas para la siguiente ronda.
+
+ La información del jugador (nombre, fichas, estado) se almacena en una estructura, su mano se gestiona con un TDA List, y el conjunto
+ de jugadores en la mesa se gestiona con un TDA CList. La lista circular es perfecta para
+ manejar turnos en póker, y en cada turno cada Jugador / Bot puede hacer las siguentes acciones:
+
+– Pasar (Check): No apostar, cediendo el turno pero continuando en la ronda (solo si no
+ hay apuestas previas).
+ – Igualar (Call): Apostar la misma cantidad que el último jugador que subió.– Subir (Raise): Aumentar la apuesta actual, forzando a los demás a igualar, subir de
+ nuevo o retirarse.
+ – Retirarse (Fold): Abandonar la mano actual, perdiendo cualquier ficha apostada en la
+ ronda.
+ - RAISE//////////////////////////
+
+También el usuario podrá elegir que nombre usará en el juego:
+
+- Ejemplo de uso : El jugador elige Iniciar partida
+- Ingresa su nombre Ej: "Usuario"
+
+## Cómo compilar y ejecutar
+
+### Requisitos (PENDIENTE)
+
+- Tener instalado **Visual Studio Code** o cualquier editor compatible con C.
+- Tener un compilador de C como **GCC** (por ejemplo, a través de **MinGW** en Windows).
+- Asegurarse de tener los archivos fuente necesarios, incluyendo los de los TDA (`CList.h`, `List.h`, y sus respectivos `.c`)./////////
+
+### Pasos para compilar y ejecutar (PENDIENTE)
+
+1. Descargar el proyecto completo.
+2. Descomprimir el contenido en una carpeta local.
+3. Abrir la carpeta del proyecto en **Visual Studio Code**.
+4. Abrir un terminal integrado en el editor.
+5. Compilar el programa con el siguiente comando:
+
+- ./build/poker.exe ?
+```bash
+gcc tdas/*.c tarea2.c -Wno-unused-result -o tarea2
+```
+
+- ./build.bat ?
+6. Ejecuta el programa
+```bash
+./tarea2
+```
+
+## Comportamiento de las funcionalidades
+
+
+A continuación se describen las funcionalidades implementadas, indicando su comportamiento esperado:
+
+### Iniciar partida:
+
+Configura el juego desde cero, solicitando el número de oponentes, creando
+los jugadores, asignando fichas y preparando la baraja y la mesa.
+
+### Iniciar ronda:
+
+Se ejecuta al comienzo de cada mano, barajando el mazo, repartiendo dos
+cartas a cada jugador y reiniciando las apuestas.
+
+### Acciones del jugador:
+
+Durante su turno, un jugador puede realizar una de las siguientes
+acciones:
+– Pasar (Check): No apostar, cediendo el turno pero continuando en la ronda (solo si no
+ hay apuestas previas).
+ – Igualar (Call): Apostar la misma cantidad que el último jugador que subió.– Subir (Raise): Aumentar la apuesta actual, forzando a los demás a igualar, subir de
+ nuevo o retirarse.
+ – Retirarse (Fold): Abandonar la mano actual, perdiendo cualquier ficha apostada en la
+ ronda.
+
+### Tomar decisiones de la IA:
+
+Los jugadores no humanos podrán elegir una acción en base a
+sus cartas y las cartas comunitarias.
+
+### Gestión de cartas comunitarias:
+
+El juego revela automáticamente las cartas en la mesa
+en tres etapas: Flop (3 cartas), Turn (1 carta) y River (1 carta), con una ronda de apuestas
+después de cada una.
+
+### Ronda de apuestas:
+
+Administra el ciclo de turnos hasta que todos los jugadores activos
+hayan igualado la apuesta más alta o se hayan retirado.
+
+### Determinar ganador:
+
+Al final de la última ronda de apuestas (o si solo queda un jugador),
+el sistema evalúa la mejor mano de 5 cartas para cada jugador (usando sus 2 cartas y las 5 de
+la mesa) y declara al ganador.
+
+### Gestión del bote y fichas:
+
+Acumula todas las apuestas en un bote central y lo entrega al
+ganador. Si un jugador se queda sin fichas, es eliminado de la partida
+
+### Salir del programa :
+
+Finaliza la ejecución del programa de forma segura, liberando memoria.
+
+---
+ (ANTIGUAMENTE FUNCIONALIDADES ADICIONALES)
+### Interfaz Gráfica de Usuario (GUI)
+ La GUI ofrece una representación visual y compacta de la partida con los siguientes elementos
+ clave:
+ • Jugadores: Muestra el nombre, fichas y cartas de cada participante (visibles para el humano,
+ ocultas para los bots).
+ • Mesa Central: Despliega las cartas comunitarias (Flop, Turn, River) y el pozo total de
+ apuestas.
+ • Panel de Acciones: Contiene los botones para que el jugador ejecute sus movimientos
+ (Igualar, Subir, etc.)
+
+### Problemas conocidos: (PENDIENTE)
+- El tiempo de carga para todos los datos del archivo csv puede ser un poco larga, para ello está comentada una condicion que solo carga las primeras 10000 canciones en la función `cargarCanciones()`
+- Algunas canciones están repetidas, sólo difieren en su id
+- No se realiza validacion completa de la entrada: Al inicio del menú principal si se ingresa una cadena con el primer caracter válido `opciones 1,2,3,4,5,6,7,8`, se almacena el resto de la cadena para la siguiente instrucción, por lo que puede realizar tareas que no se desean o acelerar el ingreso de datos (no recomendado).
+
+
+
+## Ejemplo de uso (LO HAREMOS SIN ESTO O CON ESTO, POR LO DE LA GUI ?????)
+
+"========================================"
+"           ♠️  ♥️  Poker  ♦️  ♣️"
+"========================================"
+"       ♠       ♥       ♣        ♦       "
+"1) Iniciar Partida                      "
+"2) Salir                                "
+
+### Pasos (LO HAREMOS SIN ESTO O CON ESTO, POR LO DE LA GUI ?????)
+
+1. **Iniciar Partida**  
+   El sistema carga las cartas desde un archivo CSV.
+
+   **-------------------------------------------------------**  
+   `Ingrese su opción:  1`
+   **-------------------------------------------------------**
+
+    El sistema carga las cartas y luego inicia las rondas, luego el jugador debe ingresar su nombre y La cantidad de bots (MÁX 9).
+
+
+---
+
+2. **Rondas**  
+    Se ejecuta al comienzo de cada mano, barajando el mazo, repartiendo dos
+    cartas a cada jugador y reiniciando las apuestas (Ejemplo con 3 Bots:)
+
+   **-------------------------------------------------------**  
+   `JUGADOR = A es EMPIEZA`
+    `JUGADOR = Bot 1 es BOTON`
+    `JUGADOR = Bot 2 es CIEGA MENOR`
+    `JUGADOR = Bot 3 es CIEGA MAYOR`
+    `JUGADORES PENDIENTES = 4`
+    `MESA ACTUAL:`
+    `BOTE: 15`
+
+
+    `Turno de Usuario`
+
+
+    `Tus cartas:`
+    `9 ♥`
+    `10 ♥`
+
+    `Fichas: 100 | Apuesta actual: 0 | Apuesta máxima: 10`
+
+    `OPCIONES`
+    `[1] Call [2] Raise [3] Fold`
+    `Elige una opción:`
+
+   **-------------------------------------------------------**
+    – Pasar (Check): No apostar, cediendo el turno pero continuando en la ronda (solo si no
+    hay apuestas previas).
+    – Igualar (Call): Apostar la misma cantidad que el último jugador que subió.– Subir (Raise): Aumentar la apuesta actual, forzando a los demás a igualar, subir de
+    nuevo o retirarse.
+    – Retirarse (Fold): Abandonar la mano actual, perdiendo cualquier ficha apostada en la
+    ronda.
+
+---
+
+3. **Acciones**  
+   Un ejemplo donde el jugador eligió Call :
+
+   **-------------------------------------------------------**  
+   
+    `Fichas: 100 | Apuesta actual: 0 | Apuesta máxima: 10`
+    `Fichas: 100 | Apuesta actual: 0 | Apuesta máxima: 10`
+
+    `OPCIONES`
+    `[1] Call [2] Raise [3] Fold`
+    `Elige una opción: 1`
+    `Usuario iguala la apuesta.`
+    `Presione una tecla para continuar...`
+   **-------------------------------------------------------**
+
+   El sistema muestra todas las acciones del Jugador y después de los bots.
+   **-------------------------------------------------------**
+    `JUGADORES PENDIENTES = 3`
+    `MESA ACTUAL:`
+    `BOTE: 25`
+
+
+    `Turno de Bot 1`
+    `BOTÓN`
+
+
+
+
+    `Fichas: 100 | Apuesta actual: 0 | Apuesta máxima: 10`
+
+    `OPCIONES`
+    `Bot 1 no sabe cuanto whisky tomo...`
+    `Bot 1 se retira.`
+    `Presione una tecla para continuar...`
+   **-------------------------------------------------------**
+
+Al pasar por las acciones de todos los Bots, se terminó la primera ronda y se muestran las cartas comunitarias, esta vez se eligió raise.
+
+   **-------------------------------------------------------**
+    `MESA ACTUAL:`
+    `BOTE: 25`
+
+    `FLOP`
+    `Carta [1]: 10 ♠`
+    `Carta [2]: J ♠`
+    `Carta [3]: 4 ♠`
+
+    `Turno de Usuario`
+
+
+    `Tus cartas:`
+    `9 ♥`
+    `10 ♥`
+
+    `Fichas: 90 | Apuesta actual: 0 | Apuesta máxima: 0`
+
+    `OPCIONES`
+    `[1] Check | [2] Raise | [3] Fold`
+    `Elige una opción: 2`
+    `¿Cuánto quieres subir? (mínimo 1): 10`
+    `A sube la apuesta a 10.`
+    `Presione una tecla para continuar...`
+   **-------------------------------------------------------**
+---
+
+4. **Condiciónes de victoria**
+   Al final de la última ronda de apuestas (o si solo queda un jugador),
+   el sistema evalúa la mejor mano de 5 cartas para cada jugador (usando sus 2 cartas y las 5 de
+   la mesa) y declara al ganador
+   
+   Acumula todas las apuestas en un bote central y lo entrega al
+   ganador. Si un jugador se queda sin fichas, es eliminado de la partida.
+
+   En este ejemplo todos los Bots decidieron retirarse, y termina ganando el Jugador : 
+
+   **-------------------------------------------------------**  
+   `TODOS LOS JUGADORES SE HAN RETIRADO`
+    `EL JUGADOR Usuario ha ganado 35 fichas`
+    `Presione una tecla para continuar...`
+   **-------------------------------------------------------**
+
+
+5. **Salir de la aplicación**
+   El sistema termina liberando la memoria de los Jugadores y cartas creadas
+
+   **-------------------------------------------------------**
+   `Ingrese su opción: 2`
+
+   `Saliendo...`
+   **-------------------------------------------------------**
+
+# pokerTexasHoldem
+
 extracto de wikipedia:
 **poker**
 En el juego casual, el derecho a repartir una mano suele rotar entre los jugadores y está marcado por una ficha llamada botón de repartir (o buck). En un casino, un crupier de la casa maneja las cartas de cada mano, pero el botón (normalmente un disco de plástico blanco) gira en el sentido de las agujas del reloj entre los jugadores para indicar un crupier nominal que determine el orden de las apuestas. Las cartas se reparten en el sentido de las agujas del reloj alrededor de la mesa de póquer, de una en una.

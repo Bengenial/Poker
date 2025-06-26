@@ -33,8 +33,8 @@ void definirGanador(Partida *partida);
 static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax);
 void limpiarManos(Partida *partida);
 void rondaDeApuestas(Partida *partida);
-void iniciarRonda(Partida *partida, int IArand);
-void iniciarPartida(int IArand);
+void iniciarRonda(Partida *partida);
+void iniciarPartida();
 
 
 #endif
