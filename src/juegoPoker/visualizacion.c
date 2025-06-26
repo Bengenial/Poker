@@ -11,6 +11,18 @@
 #include "estructuras.h"
 #include "accionesJugador.h"
 
+void arcoiris(char *texto){
+    // Colores ANSI para simular arcoíris
+    int colores[] = {31, 33, 32, 36, 34, 35}; // rojo, amarillo, verde, cyan, azul, magenta
+    int num_colores = sizeof(colores) / sizeof(colores[0]);
+
+    for (int i = 0; i < strlen(texto); i++) {
+        int color = colores[i % num_colores];
+        printf("\033[1;%dm%c", color, texto[i]); // 1;XXm activa color brillante
+    }
+
+    printf("\033[0m"); // Reset al final
+}
 
 void intro(int timeset){
 	limpiarPantalla();
@@ -165,5 +177,6 @@ void mostrarGanadorFinal(Partida *partida) {
 	printf("Fichas finales: %d\n", partida->ganador->fichas);
 	
 	Sleep(3000);
-	printf("\n\nGRACIAS POR JUGAR\n");
+	printf("\n\n");
+	arcoiris("GRACIAS POR JUGAR\n");
 }

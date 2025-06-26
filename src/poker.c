@@ -43,7 +43,8 @@ int main(){
 		case '1':
 			//iniciarVentana();
 			iniciarPartida();
-			
+			return 0; // Termina el programa después de terminar la partida
+
 			break;
 		case '2':
 			//ahora es un toggle, será usado para que la IA no haga siempre las mejores decisiones. 

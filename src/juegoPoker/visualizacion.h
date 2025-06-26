@@ -3,6 +3,7 @@
 
 #include "estructuras.h"
 
+void arcoiris(char *texto);   //Muestra un texto con colores simulando un arcoíris, útil para mensajes destacados
 
 void intro(int timeset);    //Una introducción al juego, mostrando un mensaje de bienvenida y animaciones iniciales
 

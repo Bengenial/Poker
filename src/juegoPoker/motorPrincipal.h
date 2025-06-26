@@ -4,9 +4,6 @@
 #include "estructuras.h"
 
 //Funciones Auxiliares
-void combinarCartasJugador(List *manoJugador, Mesa mesa, Carta cartasCombinadas[]);     //Combina las cartas del jugador con las de la mesa para formar una mano completa
-
-int contarJugadoresPendientes(CList *jugadores, Jugador *actual);   //Cuenta los jugadores que están pendientes de actuar en la ronda actual, excluyendo al jugador actual
 
 int obtenerApuestaMaxima(CList *jugadores);     //Obtiene la apuesta máxima entre todos los jugadores activos en la partida
 

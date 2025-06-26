@@ -2,8 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+//TDAS
+#include "../tdas/extra.h"
+
 //JUEGOPOKER
 #include "accionesJugador.h" 
+#include "visualizacion.h"
 #include "motorPrincipal.h"
 
 //Gestion de jugadores
@@ -23,12 +27,11 @@ Jugador *crearJugador(char *nombre, int esBot){
 	return jugador;
 }
 
-void eliminarJugadores(CList *jugadores) // hacer posible mapa hash
+void eliminarJugadores(CList *jugadores)
 {
 	Jugador *jug = clist_first(jugadores);
 	Jugador *inicio = jug;
 	do{
-		
 		if ( jug->fichas == 0 )
 		{
 			strcpy(jug->estado, "Eliminado");
@@ -63,34 +66,62 @@ int contarJugadoresActivos(CList *jugadores, Jugador *actual) {
     return n;
 }
 
+int contarJugadoresPendientes(CList *jugadores, Jugador *actual) {
+    int n = 0;
+    Jugador *jug = clist_first(jugadores);
+    if (!jug) return 0;
+    Jugador *inicio = jug;
+    do {
+        if (strcmp(jug->estado, "Jugando") == 0 && jug->fichas > 0 && !jug->yaActuo) n++;
+        jug = clist_next(jugadores);
+    } while (jug != inicio);
+
+
+	//devolver actual (current)
+	do{
+		if(jug == actual) break;
+		jug = clist_next(jugadores);
+	}while (jug != actual);
+	
+    return n;
+}
+
 //Acciones en rondaApuestas
 void checkOrCall(Jugador *jugadorActual, int apuestaActual, Partida *partida, int *jugadoresPendientes){
 	if (jugadorActual->apuesta == apuestaActual) {
-		printf("%s pasa.\n", jugadorActual->nombre);
+		printf("%s \033[1;92mpasa.\033[0m\n", jugadorActual->nombre);
 	} else {
 		int diferencia = apuestaActual - jugadorActual->apuesta;
 		if (jugadorActual->fichas >= diferencia) {
 			jugadorActual->fichas -= diferencia;
 			jugadorActual->apuesta += diferencia;
 			partida->mesa.bote += diferencia;
-			printf("%s iguala la apuesta.\n", jugadorActual->nombre);
-			if (jugadorActual->fichas == 0) printf("%s va all-in\n", jugadorActual->nombre);
+			printf("%s \033[1;93miguala la apuesta.\033[0m\n", jugadorActual->nombre);
+			if (jugadorActual->fichas == 0){
+				printf("%s va ", jugadorActual->nombre);
+				arcoiris("all-in");
+				puts("");
+			} 
 		} else {
 			partida->mesa.bote += jugadorActual->fichas;
 			jugadorActual->apuesta += jugadorActual->fichas;
 			jugadorActual->fichas = 0;
-			printf("%s va all-in.\n", jugadorActual->nombre);
+			printf("%s va ", jugadorActual->nombre);
+			arcoiris("all-in");
+			puts("");
 		}
 	}
 	jugadorActual->yaActuo = 1;
 	jugadorActual->hizoRiseCall = 1;
 	(*jugadoresPendientes)--;
+	presioneTeclaParaContinuar();
 }
 
 void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPendientes, Jugador *inicio, int  *cantidad, Jugador *jug){
 	if(!actual->esBot){
 		printf("¿Cuánto quieres subir? (mínimo %d): ", (*apuestaMax) - actual->apuesta + 1);
 		scanf("%d", cantidad);
+		getchar();
 
 	}
 	else{
@@ -107,8 +138,12 @@ void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPen
 	(*apuestaMax) = actual->apuesta;
 	actual->hizoRiseCall = 1;
 
-	printf("%s sube la apuesta a %d.\n", actual->nombre, actual->apuesta);
-	if (actual->fichas == 0) printf("%s va all-in\n", actual->nombre);
+	printf("%s \033[1;96msube la apuesta\033[0m a %d.\n", actual->nombre, actual->apuesta);
+	if (actual->fichas == 0){
+		printf("%s va ", actual->nombre);
+		arcoiris("all-in");
+		puts("");
+	} 
 
 	// Reabrir ronda: todos deben responder al nuevo raise excepto quien lo hizo y los retirados
 	jug = clist_first(partida->jugadores);
@@ -121,12 +156,12 @@ void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPen
 	actual->yaActuo = 1;
 	(*jugadoresPendientes) = contarJugadoresPendientes(partida->jugadores, actual);
 	inicio = actual;
+	presioneTeclaParaContinuar();
 }
 
 void fold(Jugador *actual, int *jugadoresPendientes, Partida *partida, int *salir){
-	//nuevo
 	strcpy(actual->estado, "Retirado");
-	printf("%s se retira.\n", actual->nombre);
+	printf("%s \033[1;95mse retira.\033[0m\n", actual->nombre);
 	actual->yaActuo = 1;
 
 	//solo restar si hay más de un jugador
@@ -144,6 +179,7 @@ void fold(Jugador *actual, int *jugadoresPendientes, Partida *partida, int *sali
 		} while (actual != inicio);
 		
 		(*salir) = 0;
-		(*jugadoresPendientes) = 0;
+		(*jugadoresPendientes) = 0; //no crear un bucle infinito
 	}
+	presioneTeclaParaContinuar();
 }

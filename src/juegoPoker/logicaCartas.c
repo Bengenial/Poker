@@ -12,7 +12,7 @@
 
 
 //Funciones de la baraja en sí
-void intercambiarCartas(Carta *a, Carta *b){
+void intercambiarCartas(Carta *a, Carta *b){ //es un swap
 	Carta aux = *a;
     *a = *b;
     *b = aux;
@@ -85,6 +85,20 @@ int compararCartas(const void *a, const void *b)
 	Carta *cartaA = (Carta*)a;
     Carta *cartaB = (Carta*)b;
     return obtenerValorCarta(cartaB->valor) - obtenerValorCarta(cartaA->valor);
+}
+
+void combinarCartasJugador(List *manoJugador, Mesa mesa, Carta cartasCombinadas[]){
+	int index = 0;
+	Carta *carta = list_first(manoJugador);
+	while(carta != NULL){
+		cartasCombinadas[index] = *carta;
+		index++;
+		carta = list_next(manoJugador);
+	}
+	for (int i = 0; i < mesa.total; i++) {
+		cartasCombinadas[index] = mesa.cartas[i];
+		index++;
+	}
 }
 
 void contarRepeticiones(Carta cartas[], int numCartas, int repeticiones[], int valores[]) {
@@ -189,7 +203,8 @@ ManoEvaluada evaluarMano(Carta cartas[], int numCartas) { //puede ser cartas[7]
             kickers[numKickers++] = i;
         }
     }
-
+    
+    //la puntuacion es un valor arbitrario
     if (esColor && esEscalera && valorEscalera == 14) {
         mano.tipo = ESCALERA_REAL;
         mano.valores[0] = 14;

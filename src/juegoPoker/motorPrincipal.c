@@ -14,39 +14,6 @@
 #include "visualizacion.h"
 
 //Funciones Auxiliares
-void combinarCartasJugador(List *manoJugador, Mesa mesa, Carta cartasCombinadas[]){
-	int index = 0;
-	Carta *carta = list_first(manoJugador);
-	while(carta != NULL){
-		cartasCombinadas[index] = *carta;
-		index++;
-		carta = list_next(manoJugador);
-	}
-	for (int i = 0; i < mesa.total; i++) {
-		cartasCombinadas[index] = mesa.cartas[i];
-		index++;
-	}
-}
-
-int contarJugadoresPendientes(CList *jugadores, Jugador *actual) {
-    int n = 0;
-    Jugador *jug = clist_first(jugadores);
-    if (!jug) return 0;
-    Jugador *inicio = jug;
-    do {
-        if (strcmp(jug->estado, "Jugando") == 0 && jug->fichas > 0 && !jug->yaActuo) n++;
-        jug = clist_next(jugadores);
-    } while (jug != inicio);
-
-
-	//devolver actual (current)
-	do{
-		if(jug == actual) break;
-		jug = clist_next(jugadores);
-	}while (jug != actual);
-	
-    return n;
-}
 
 int obtenerApuestaMaxima(CList *jugadores) {
     int max = 0;
@@ -60,7 +27,7 @@ int obtenerApuestaMaxima(CList *jugadores) {
     return max;
 }
 
-void funcionTrampa(Partida *partida){
+void funcionTrampa(Partida *partida){ //funciona para 3 jugadores
 	Carta carta;
 	//1 JUG
 	strcpy(carta.valor,"A");
@@ -264,48 +231,21 @@ void limpiarManos(Partida *partida){
 	} while(jug != inicio);
 }
 
-/*Accion tomarDecisiones(ManoEvaluada manoActual, int apuestaActual, int apuestaMax)
-{	
-	//Tener en cuenta que la IA es lo más basico, osea va a ser predesible (por el momento...)
-	if(apuestaActual < apuestaMax){
-
-		if(manoActual.puntuacion < 1000000) //numero por definirse, pero es un ejemplo
-		{ //pesima mano
-			return ACCION_FOLD; //en este caso si aumentan la apuesta, me retiro (fold)
-		}
-		else{
-			return ACCION_CALL;
-		}
-	}
-	else{
-		if(manoActual.puntuacion < 30000000)
-		{ //mano decente
-			return ACCION_CHECK;
-		}
-		else{ //si tiene una muy buena mano
-			return ACCION_RAISE; //va a aumentar la apuesta
-		}
-	}
-}*/
-
-// VERSIÓN MEJORADA DE LA IA CON LÓGICA PRE-FLOP Y POST-FLOP
-static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax)
+static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax) // las decisiones de un bot
 {	
     int apuestaActual = jugadorActual->apuesta;
     ManoEvaluada manoEvaluada;
 
+	/* //? para debuguear, por si quieres que todos los bots te siguan el call
 	if (apuestaActual < apuestaMax) 
-    {
-        // Si la apuesta máxima es mayor a lo que he apostado,
-        // significa que debo actuar. Forzamos un CALL.
         return ACCION_CALL;
-    } 
     else 
-    {
-        // Si no hay una apuesta que igualar, simplemente pasamos (CHECK).
-        // Esto permite que la ronda continúe hasta que tú decidas hacer RAISE.
         return ACCION_CHECK;
-    }
+	*/
+
+	/* //? para debuguear, por si quieres que todos los bots se retiren
+	return ACCION_FOLD;
+	*/
 	
     // --- LÓGICA PRE-FLOP (cuando no hay cartas en la mesa) ---
     if (partida->mesa.total == 0) {
@@ -360,7 +300,7 @@ void logicaJugador(Jugador *actual, int *apuestaMax, Partida *partida, int *juga
     int opcion;
     mostrarMano(actual->mano);
     printf("\nFichas: %d | Apuesta actual: %d | Apuesta máxima: %d\n\nOPCIONES\n", actual->fichas, actual->apuesta, *apuestaMax);
-    if (actual->hizoRiseCall || actual->fichas <= *apuestaMax) {
+    if (actual->hizoRiseCall || actual->fichas <= *apuestaMax) { //solo puede hacer check/call o fold porque ya hizo raise o no tiene fichas suficientes
         printf("[1] Call | [2] Fold\n");
         do {
             printf("Elige una opción: ");
@@ -410,7 +350,7 @@ void logicaBot(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadore
     printf("\nFichas: %d | Apuesta actual: %d | Apuesta máxima: %d\n\nOPCIONES\n", actual->fichas, actual->apuesta, *apuestaMax);
     int num = (rand() % 10) + 1;
 
-    switch (num) {
+    switch (num) { //mensajes aleatorios para los bots
         case 1:
             printf("%s esta pensando...\n", actual->nombre);
             break;
@@ -461,7 +401,7 @@ void logicaBot(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadore
     }
 }
 
-void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
+void rondaDeApuestas(Partida *partida){
     int apuestaMax = obtenerApuestaMaxima(partida->jugadores);
     int jugadoresActivos = contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores));
     int jugadoresPendientes = jugadoresActivos;
@@ -469,7 +409,7 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
     Jugador *jug = clist_first(partida->jugadores);
     Jugador *inicio = jug;
 	
-    do {
+    do {//solo pueden actuar una vez los jugadores
         jug->yaActuo = 0;
         jug = clist_next(partida->jugadores);
     } while (jug != inicio);
@@ -477,15 +417,14 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 
     Jugador *actual = clist_first(partida->jugadores);
     inicio = actual;
-	while (actual != partida->siguienteApuesta){
+	while (actual != partida->siguienteApuesta){ //busca al siguiente jugador que puede actuar
 		actual = clist_next(partida->jugadores);
 		if (actual == inicio) break;
 	}
 
 	inicio = actual;
-	int salir = 1;
+	int salir = 1; // en caso de que todos hagan fold
 
-	//benjoid
     while(jugadoresPendientes > 0 && salir){
 		printf("JUGADORES PENDIENTES = %d\n", jugadoresPendientes);
 
@@ -510,18 +449,17 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 			}
 			
 		}
-		// Avanza al siguiente jugador circularmente
+		// Avanza al siguiente jugador circularmente, jugadores que no pueden actuar se saltan
 		do {
 			actual = clist_next(partida->jugadores);
 		} while ((strcmp(actual->estado, "Retirado") == 0 ||actual->fichas == 0 || actual->yaActuo) && actual != inicio);
-		presioneTeclaParaContinuar();
+
 		limpiarPantalla();
 
 	}
 	
 
     // Reinicia apuestas para la siguiente ronda
-
 	jug = clist_first(partida->jugadores);
     inicio = jug;
     do {
@@ -559,50 +497,53 @@ void iniciarRonda(Partida *partida){
 		partida->jugadorCiegaMenor->apuesta = ciegaMenor;
 	}
 
+	//Aumentar el bote
 	partida->mesa.bote += ciegaMayor + ciegaMenor;
 	partida->mesa.total = 0;
 	
-	
-	//ahora (culpa anselmo)
 	barajarCartas(&partida->baraja); // Barajar cartas
 
+	//? Por si quieres un juego personalizado para 3 jugadores (revisar la fucnión funcionTrampa)
 	//funcionTrampa(partida);
+
+
 	repartirCartas(partida);
-	rondaDeApuestas(partida);//agregar IArand dsp
-	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){
+	rondaDeApuestas(partida);	//primera ronda de apuestas
+
+	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){ //si solo queda un jugador activo
 		mostrarGandorFold(partida);
 		limpiarManos(partida);
 		return;
-	}	//foldearon
+	}
 	moverIzquierdaBoton(partida);//mover a la izquierda del boton
 
 	crearFlop(partida); //(3 cartas)
-	rondaDeApuestas(partida);
-	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){
+	rondaDeApuestas(partida);	//segunda ronda de apuestas
+
+	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){ //si solo queda un jugador activo
 		mostrarGandorFold(partida);
 		limpiarManos(partida);
 		return;
-	}	//foldearon
-	//mover a laizquierda del boton
-	moverIzquierdaBoton(partida);
+	}
+	moverIzquierdaBoton(partida); //mover a laizquierda del boton
 
 	crearTurn(partida); //(1 carta)
-	rondaDeApuestas(partida);
-	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){
+	rondaDeApuestas(partida);	 //tercera ronda de apuestas
+
+	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){	 //si solo queda un jugador activo
 		mostrarGandorFold(partida);
 		limpiarManos(partida);
 		return;
-	}	//foldearon
-	//mover a laizquierda del boton
-	moverIzquierdaBoton(partida);
+	}
+	moverIzquierdaBoton(partida); //mover a laizquierda del boton
 
 	crearRiver(partida); //(1 carta)
-	rondaDeApuestas(partida); //final
-	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){
+	rondaDeApuestas(partida); //ultima ronda de apuestas
+	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){ 	//si solo queda un jugador activo
 		mostrarGandorFold(partida);
 		limpiarManos(partida);
 		return;
-	}	//foldearon
+	}
 	printf("LLEGAN AL SHOWDOWN\n\n");
 
 	definirGanador(partida);
@@ -716,5 +657,6 @@ void iniciarPartida(){
 	buscarGanador(&partida);
 
 	if (partida.ganador) mostrarGanadorFinal(&partida);
+	presioneTeclaParaContinuar();
 }
 
