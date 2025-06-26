@@ -17,4 +17,4 @@ IF %ERRORLEVEL% NEQ 0 (
 echo ✅ Compilacion exitosa.
 
 echo 🚀 Ejecutando el juego...
-build\poker.exe
+start build\poker.exe

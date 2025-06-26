@@ -144,5 +144,6 @@ void fold(Jugador *actual, int *jugadoresPendientes, Partida *partida, int *sali
 		} while (actual != inicio);
 		
 		(*salir) = 0;
+		(*jugadoresPendientes) = 0;
 	}
 }

@@ -290,10 +290,23 @@ void limpiarManos(Partida *partida){
 
 // VERSIÓN MEJORADA DE LA IA CON LÓGICA PRE-FLOP Y POST-FLOP
 static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax)
-{
+{	
     int apuestaActual = jugadorActual->apuesta;
     ManoEvaluada manoEvaluada;
 
+	if (apuestaActual < apuestaMax) 
+    {
+        // Si la apuesta máxima es mayor a lo que he apostado,
+        // significa que debo actuar. Forzamos un CALL.
+        return ACCION_CALL;
+    } 
+    else 
+    {
+        // Si no hay una apuesta que igualar, simplemente pasamos (CHECK).
+        // Esto permite que la ronda continúe hasta que tú decidas hacer RAISE.
+        return ACCION_CHECK;
+    }
+	
     // --- LÓGICA PRE-FLOP (cuando no hay cartas en la mesa) ---
     if (partida->mesa.total == 0) {
         Carta *c1 = list_first(jugadorActual->mano);
@@ -430,7 +443,7 @@ void logicaBot(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadore
             break;
     }
 
-    Sleep(1500); // Simula que el bot "piensa"
+    Sleep(1000); // Simula que el bot "piensa"
 
     Accion accionBot = tomarDecisiones(partida, actual, *apuestaMax);
 
