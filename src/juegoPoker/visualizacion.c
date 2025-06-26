@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "../tdas/list.h"
 #include "../tdas/clist.h"
-
+#include "../tdas/extra.h"
 
 #include <windows.h>
 
@@ -36,6 +36,30 @@ void intro(int timeset){
     //Sleep(timeset*3); //300
 	Sleep(timeset * 3);
     printf("\n\n");
+}
+
+void mostrarCarta(Carta carta)
+{
+	if(strcmp(carta.color, "corazones") == 0) // son iguales
+	{ 
+		printf("\033[1;31m%s ♥\033[0m", carta.valor);
+		return;
+	}
+
+	if(strcmp(carta.color, "diamantes") == 0)
+	{ 
+		printf("\033[1;34m%s ♦\033[0m", carta.valor);
+		return;
+	}
+	
+	if(strcmp(carta.color, "picas") == 0)
+	{ 
+		printf("\033[5;90m%s ♠\033[0m", carta.valor);
+		return;
+	}
+	
+	printf("\033[1;32m%s ♣\033[0m", carta.valor);
+	
 }
 
 void mostrarMesa(Mesa mesa)
@@ -85,30 +109,6 @@ void mostrarMano(List *mano){
 		printf("\n");
 		carta = list_next(mano);
 	}
-}
-
-void mostrarCarta(Carta carta)
-{
-	if(strcmp(carta.color, "corazones") == 0) // son iguales
-	{ 
-		printf("\033[1;31m%s ♥\033[0m", carta.valor);
-		return;
-	}
-
-	if(strcmp(carta.color, "diamantes") == 0)
-	{ 
-		printf("\033[1;34m%s ♦\033[0m", carta.valor);
-		return;
-	}
-	
-	if(strcmp(carta.color, "picas") == 0)
-	{ 
-		printf("\033[5;90m%s ♠\033[0m", carta.valor);
-		return;
-	}
-	
-	printf("\033[1;32m%s ♣\033[0m", carta.valor);
-	
 }
 
 void mostrarTipoMano(TipoMano tipo) {

@@ -1,6 +1,8 @@
 #ifndef LOGICACARTAS_H
 #define LOGICACARTAS_H
 
+#include "estructuras.h"
+
 //Funcion barajas en si
 void intercambiarCartas(Carta *a, Carta *b);
 void leerCartas(Baraja *baraja);

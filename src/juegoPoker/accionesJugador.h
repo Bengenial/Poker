@@ -2,7 +2,7 @@
 #define ACCIONESJUGADOR_H
 
 //Del poker
-#include "motorPrincipal.h"
+#include "estructuras.h"
 
 //Gestion de jugadores
 Jugador *crearJugador(char *nombre, int esBot);

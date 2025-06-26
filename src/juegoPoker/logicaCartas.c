@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../tdas/list.h"
-#include "../tdas/clist.h"
+#include <time.h>
+
+#include "../tdas/extra.h"
 
 //Del poker
 #include "estructuras.h"
@@ -69,11 +70,86 @@ void repartirCartas(Partida *partida){
 
 
 //Logica de evaluciones
+int obtenerValorCarta(char *valor){
+	if(strcmp(valor, "A") == 0) return 14;
+	if(strcmp(valor, "K") == 0) return 13;
+	if(strcmp(valor, "Q") == 0) return 12;
+	if(strcmp(valor, "J") == 0) return 11;
+	return atoi(valor); //otro valores (2-10)
+}
+
 int compararCartas(const void *a, const void *b)
 {
 	Carta *cartaA = (Carta*)a;
     Carta *cartaB = (Carta*)b;
     return obtenerValorCarta(cartaB->valor) - obtenerValorCarta(cartaA->valor);
+}
+
+void contarRepeticiones(Carta cartas[], int numCartas, int repeticiones[], int valores[]) {
+    for (int i = 0; i < 15; i++) {
+        repeticiones[i] = 0;
+    }
+    
+    for (int i = 0; i < numCartas; i++) {
+        int valor = obtenerValorCarta(cartas[i].valor);
+        repeticiones[valor]++;
+        valores[i] = valor;
+    }
+} //sirve para ver los pares y/o trios
+
+int obtenerIndicePalo(char *color){
+	if (strcmp(color, "corazones") == 0) return 0;
+	if (strcmp(color, "diamantes") == 0) return 1;
+	if (strcmp(color, "tréboles") == 0) return 2;
+	if (strcmp(color, "picas") == 0) return 3;
+	return -1;
+}
+
+int verificarColor(Carta cartas [], int numCartas, int *valoresColor)
+{
+	int palos[4] = {0};
+	Carta cartasPorPalo[4][7];
+	int contadorPorPalo[4] = {0};
+
+	for (int i = 0; i < numCartas; i++){
+		int palo = obtenerIndicePalo(cartas[i].color);
+		if (palo >= 0 ){
+			cartasPorPalo[palo][contadorPorPalo[palo]] = cartas[i];
+			contadorPorPalo[palo]++;
+			palos[palo]++; 
+		}
+	}
+	for (int i = 0; i < 4; i++)
+	{
+		if(palos[i] >= 5)
+		{
+			qsort(cartasPorPalo[i], contadorPorPalo[i], sizeof(Carta), compararCartas);
+			for (int j = 0; j < 5; j++){
+				valoresColor[j] = obtenerValorCarta(cartasPorPalo[i][j].valor);
+			}
+			return 1;
+		}
+	}
+	return 0;
+}
+
+int verificarEscalera(Carta cartas[], int numCartas, int *valorEscalera) {
+	int valores[15] = {0};
+	for (int i = 0; i < numCartas; i++) {
+        int valor = obtenerValorCarta(cartas[i].valor);
+        valores[valor] = 1;
+    }
+	if (valores[14] && valores[2] && valores[3] && valores[4] && valores[5]){
+		*valorEscalera = 5;
+		return 1;
+	}	
+	for (int i = 14; i>=6; i--){
+		if (valores[i] && valores[i-1] && valores[i-2] && valores[i-3] && valores[i-4]){
+			*valorEscalera = i;
+			return 1;
+		}
+	}
+	return 0;;
 }
 
 ManoEvaluada evaluarMano(Carta cartas[], int numCartas) { //puede ser cartas[7]
@@ -173,78 +249,6 @@ ManoEvaluada evaluarMano(Carta cartas[], int numCartas) { //puede ser cartas[7]
     return mano; //returna 
 }
 
-//Funciones auxiliares de apollo
-int obtenerValorCarta(char *valor){
-	if(strcmp(valor, "A") == 0) return 14;
-	if(strcmp(valor, "K") == 0) return 13;
-	if(strcmp(valor, "Q") == 0) return 12;
-	if(strcmp(valor, "J") == 0) return 11;
-	return atoi(valor); //otro valores (2-10)
-}
+//Funciones auxiliares de apoyo
 
-int obtenerIndicePalo(char *color){
-	if (strcmp(color, "corazones") == 0) return 0;
-	if (strcmp(color, "diamantes") == 0) return 1;
-	if (strcmp(color, "tréboles") == 0) return 2;
-	if (strcmp(color, "picas") == 0) return 3;
-	return -1;
-}
 
-int verificarColor(Carta cartas [], int numCartas, int *valoresColor)
-{
-	int palos[4] = {0};
-	Carta cartasPorPalo[4][7];
-	int contadorPorPalo[4] = {0};
-
-	for (int i = 0; i < numCartas; i++){
-		int palo = obtenerIndicePalo(cartas[i].color);
-		if (palo >= 0 ){
-			cartasPorPalo[palo][contadorPorPalo[palo]] = cartas[i];
-			contadorPorPalo[palo]++;
-			palos[palo]++; 
-		}
-	}
-	for (int i = 0; i < 4; i++)
-	{
-		if(palos[i] >= 5)
-		{
-			qsort(cartasPorPalo[i], contadorPorPalo[i], sizeof(Carta), compararCartas);
-			for (int j = 0; j < 5; j++){
-				valoresColor[j] = obtenerValorCarta(cartasPorPalo[i][j].valor);
-			}
-			return 1;
-		}
-	}
-	return 0;
-}
-
-int verificarEscalera(Carta cartas[], int numCartas, int *valorEscalera) {
-	int valores[15] = {0};
-	for (int i = 0; i < numCartas; i++) {
-        int valor = obtenerValorCarta(cartas[i].valor);
-        valores[valor] = 1;
-    }
-	if (valores[14] && valores[2] && valores[3] && valores[4] && valores[5]){
-		*valorEscalera = 5;
-		return 1;
-	}	
-	for (int i = 14; i>=6; i--){
-		if (valores[i] && valores[i-1] && valores[i-2] && valores[i-3] && valores[i-4]){
-			*valorEscalera = i;
-			return 1;
-		}
-	}
-	return 0;;
-}
-
-void contarRepeticiones(Carta cartas[], int numCartas, int repeticiones[], int valores[]) {
-    for (int i = 0; i < 15; i++) {
-        repeticiones[i] = 0;
-    }
-    
-    for (int i = 0; i < numCartas; i++) {
-        int valor = obtenerValorCarta(cartas[i].valor);
-        repeticiones[valor]++;
-        valores[i] = valor;
-    }
-} //sirve para ver los pares y/o trios

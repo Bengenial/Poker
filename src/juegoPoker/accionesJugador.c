@@ -1,12 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../tdas/list.h"
-#include "../tdas/clist.h"
-#include "../tdas/extra.h"
+#include <string.h>
 
+#include "accionesJugador.h" 
 //Del poker
-#include "accionesJugador.h"
-#include "estructuras.h"
 #include "motorPrincipal.h"
 
 //Gestion de jugadores

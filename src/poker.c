@@ -1,20 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "tdas/list.h"
-#include "tdas/clist.h"
-#include "tdas/extra.h"
+#include <windows.h>
 #include <string.h>
 #include <time.h>
 
-#include <windows.h>
+//TDAS
+#include "tdas/list.h"
+#include "tdas/clist.h"
+#include "tdas/extra.h"
 
 
-//Del poker
-#include "tdasPoker/estructuras.h"
-#include "tdasPoker/logicaCartas.h"
-#include "tdasPoker/accionesJugador.h"
-#include "tdasPoker/visualizacion.h"
-#include "tdasPoker/motorPrincipal.h"
+//JUEGOPOKER
+#include "juegoPoker/estructuras.h"
+#include "juegoPoker/logicaCartas.h"
+#include "juegoPoker/accionesJugador.h"
+#include "juegoPoker/visualizacion.h"
+#include "juegoPoker/motorPrincipal.h"
 
 
 
@@ -27,13 +28,11 @@ int main(){
 
 	char opcion;
 	do{
-		puts("========================================");
-		puts("           ♠️  ♥️  Poker  ♦️  ♣️");
-		puts("========================================");
-		printf("| \033[5;90m7 ♠ \033[0m| \033[1;31m 7 ♥ \033[0m| \033[1;32m ♣ 7 \033[0m| \033[1;34m 7 ♦\033[0m |\n");
+		puts("=========================================");
+		puts("|\033[5;90m  ♠\033[1;31m   ♥\033[1;32m   ♣\033[1;34m   ♦\033[0m  POKER\033[1;34m  ♦\033[1;32m   ♣\033[1;31m   ♥\033[5;90m   ♠  \033[0m|");
+		puts("=========================================");
 		puts("1) Iniciar Partida");
 		puts("2) Salir");
-		puts("3) Activar IArand");
 
 		printf("Ingrese su opción: ");
 		scanf(" %c", &opcion);
