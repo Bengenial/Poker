@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "motorprincipal.h": "c",
+        "accionesjugador.h": "c",
+        "visualizacion.h": "c",
+        "logicacartas.h": "c",
+        "list.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c",
+        "estructuras.h": "c",
+        "clist.h": "c"
+    }
+}

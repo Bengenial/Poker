@@ -1,0 +1,31 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compilar Poker Raylib",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "poker.c",
+                "src/ventana.c",
+                "src/tdasPoker/accionesJugador.c",
+                "src/tdasPoker/logicaCartas.c",
+                "src/tdasPoker/motorPrincipal.c",
+                "src/tdasPoker/visualizacion.c",
+                "src/tdas/clist.c",
+                "src/tdas/extra.c",
+                "src/tdas/list.c",
+                // Si tienes archivos en src/tdas también agrégalos aquí:
+                // "src/tdas/archivoX.c",
+                "-o",
+                "build/poker.exe",
+                "-Wno-unused-result"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
