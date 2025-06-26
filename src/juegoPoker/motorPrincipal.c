@@ -443,7 +443,7 @@ void logicaBot(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadore
             break;
     }
 
-    Sleep(1000); // Simula que el bot "piensa"
+    //Sleep(1000); // Simula que el bot "piensa"
 
     Accion accionBot = tomarDecisiones(partida, actual, *apuestaMax);
 
@@ -533,8 +533,8 @@ void rondaDeApuestas(Partida *partida){ //reconocer si es humano o no
 }
 
 void iniciarRonda(Partida *partida){
-	int ciegaMayor = 10;
-	int ciegaMenor = 5;
+	int ciegaMayor = 8 + 2*(partida->ronda);
+	int ciegaMenor = ciegaMayor/2;
 	partida->mesa.bote = 0;
 	
 	//Ciega Mayor
@@ -659,18 +659,14 @@ void iniciarPartida(){
     partida.siguienteApuesta = siguienteApuesta; //parte
 
 	partida.baraja = baraja;
-	partida.ronda = 0;
+	partida.ronda = 1;
 	
-	
-	Jugador *jug = siguienteApuesta;
-    Jugador *inicio = jug;
-
-    
 
 	//antes iniciarRonda(partida,IArand);
 	do{	
 
-		//1.-En cada ronda aumentar las ciegas (menor y mayor) 
+		Jugador *jug = partida.siguienteApuesta;
+    	Jugador *inicio = jug;
 		//2.-Si el jugador, mostrar directamente el ganador
 
 		printf("\n\n=============\nRonda numero : %d\n=============\n\n", partida.ronda);
