@@ -710,7 +710,7 @@ void iniciarPartida(){
 		partida.jugadorBoton = boton;
 		partida.jugadorCiegaMenor = ciegaMenor;
 		partida.jugadorCiegaMayor = ciegaMayor;
-		partida.siguienteApuesta = siguienteApuesta; //parte
+		partida.siguienteApuesta = siguienteApuesta; //el que parte
 
 		partida.ronda++;
 
