@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
+
+//TDAS
 #include "../tdas/list.h"
 #include "../tdas/clist.h"
 #include "../tdas/extra.h"
 
-#include <windows.h>
-
-
-//Del poker
+//JUEGOPOKER
 #include "estructuras.h"
 #include "accionesJugador.h"
 

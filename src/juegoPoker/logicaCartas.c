@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 
+
+//TDAS
 #include "../tdas/extra.h"
 
-//Del poker
+//JUEGOPOKER
 #include "estructuras.h"
 #include "accionesJugador.h"
 
@@ -246,9 +248,6 @@ ManoEvaluada evaluarMano(Carta cartas[], int numCartas) { //puede ser cartas[7]
                          kickers[3] * 10 + kickers[4];
     }
 
-    return mano; //returna 
+    return mano; //retorna 
 }
-
-//Funciones auxiliares de apoyo
-
 

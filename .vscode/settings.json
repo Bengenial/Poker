@@ -10,6 +10,7 @@
         "estructuras.h": "c",
         "time.h": "c",
         "extra.h": "c",
-        "clist.h": "c"
+        "clist.h": "c",
+        "windows.h": "c"
     }
 }

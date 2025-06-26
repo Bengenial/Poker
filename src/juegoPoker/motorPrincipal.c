@@ -4,11 +4,11 @@
 #include <time.h>
 #include <windows.h>
 
+//TDAS
 #include "../tdas/extra.h"
 
+//JUEGOPOKER
 #include "motorPrincipal.h"
-
-//Del poker
 #include "logicaCartas.h"
 #include "accionesJugador.h"
 #include "visualizacion.h"
@@ -39,7 +39,7 @@ int contarJugadoresPendientes(CList *jugadores, Jugador *actual) {
     } while (jug != inicio);
 
 
-	//devolver actual (current?)
+	//devolver actual (current)
 	do{
 		if(jug == actual) break;
 		jug = clist_next(jugadores);

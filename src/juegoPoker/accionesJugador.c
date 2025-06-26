@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+//JUEGOPOKER
 #include "accionesJugador.h" 
-//Del poker
 #include "motorPrincipal.h"
 
 //Gestion de jugadores
