@@ -42,23 +42,23 @@ void mostrarCarta(Carta carta)
 {
 	if(strcmp(carta.color, "corazones") == 0) // son iguales
 	{ 
-		printf("\033[1;31m%s ♥\033[0m", carta.valor);
+		printf("\033[1;91m%s ♥\033[0m", carta.valor);
 		return;
 	}
 
 	if(strcmp(carta.color, "diamantes") == 0)
 	{ 
-		printf("\033[1;34m%s ♦\033[0m", carta.valor);
+		printf("\033[1;94m%s ♦\033[0m", carta.valor);
 		return;
 	}
 	
 	if(strcmp(carta.color, "picas") == 0)
 	{ 
-		printf("\033[5;90m%s ♠\033[0m", carta.valor);
+		printf("\033[1;90m%s ♠\033[0m", carta.valor);
 		return;
 	}
 	
-	printf("\033[1;32m%s ♣\033[0m", carta.valor);
+	printf("\033[1;92m%s ♣\033[0m", carta.valor);
 	
 }
 
@@ -81,7 +81,7 @@ void mostrarMesa(Mesa mesa)
 	
 	for(int k = 0 ; k < mesa.total; k++)
 	{
-		printf("Carta [%d]: ", k+1);//, mesa.cartas[k].valor);
+		printf("Carta [%d]: ", k+1);
 		mostrarCarta(mesa.cartas[k]);
 		printf("\n");
 	}
@@ -92,7 +92,6 @@ void mostrarCartasJugador(Jugador *jugador) {
     printf("%s: ", jugador->nombre);
     Carta *carta = list_first(jugador->mano);
     while (carta != NULL) {
-        //printf("%s", carta->valor);
 		mostrarCarta(*carta);
 		printf("   ");
         carta = list_next(jugador->mano);
