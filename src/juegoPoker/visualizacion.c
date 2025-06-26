@@ -154,3 +154,13 @@ void mostrarGandorFold(Partida *partida){
 	partida->mesa.bote = 0;
 
 }
+
+/*void mostrarGanadorFinal(Partida *partida) {
+	printf("\n=== RESULTADO FINAL ===\n");
+	Sleep(3000);
+	
+	if (partida->ganador) {
+		printf("Ganador de la partida: %s\n", partida->ganador->nombre);
+		printf("Fichas finales: %d\n", partida->ganador->fichas);
+	}
+}*/
