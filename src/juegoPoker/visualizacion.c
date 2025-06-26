@@ -149,18 +149,22 @@ void mostrarTipoMano(TipoMano tipo) {
 void mostrarGandorFold(Partida *partida){
 	printf("TODOS LOS JUGADORES SE HAN RETIRADO\n");
 	printf("EL JUGADOR %s ha ganado %d fichas\n", partida->ganador->nombre, partida->mesa.bote);
+
 	//repartir bote
 	partida->ganador->fichas += partida->mesa.bote;
 	partida->mesa.bote = 0;
 
 }
 
-/*void mostrarGanadorFinal(Partida *partida) {
+void mostrarGanadorFinal(Partida *partida) {
+	limpiarPantalla();
 	printf("\n=== RESULTADO FINAL ===\n");
 	Sleep(3000);
 	
-	if (partida->ganador) {
-		printf("Ganador de la partida: %s\n", partida->ganador->nombre);
-		printf("Fichas finales: %d\n", partida->ganador->fichas);
-	}
-}*/
+	
+	printf("Ganador de la partida: %s\n", partida->ganador->nombre);
+	printf("Fichas finales: %d\n", partida->ganador->fichas);
+	
+	Sleep(3000);
+	printf("\n\nGRACIAS POR JUGAR\n");
+}

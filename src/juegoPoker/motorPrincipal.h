@@ -38,6 +38,8 @@ void rondaDeApuestas(Partida *partida); //Gestiona una ronda de apuestas, permit
 
 void iniciarRonda(Partida *partida);    //Inicia una ronda de juego, gestionando las apuestas iniciales, repartiendo cartas y llevando a cabo las rondas de apuestas
 
+void buscarGanador(Partida *partida);   //Busca al ganador de la partida al final de una ronda, evaluando las manos de los jugadores activos y mostrando el resultado
+
 void iniciarPartida();  //Inicia una partida de poker, configurando los jugadores, la baraja y el estado inicial del juego
 
 #endif

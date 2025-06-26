@@ -18,5 +18,6 @@ void mostrarTipoMano(TipoMano tipo);    //Muestra el tipo de mano que tiene un j
 
 void mostrarGandorFold(Partida *partida);   //Muestra el ganador de la partida o si un jugador ha hecho fold, actualizando el estado de la partida
 
+void mostrarGanadorFinal(Partida *partida);   //Muestra el ganador final de la partida
 
 #endif

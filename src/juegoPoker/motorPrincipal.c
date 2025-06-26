@@ -607,9 +607,24 @@ void iniciarRonda(Partida *partida){
 
 	definirGanador(partida);
 	limpiarManos(partida); 
-
 	eliminarJugadores(partida->jugadores);
 	
+	presioneTeclaParaContinuar();
+	limpiarPantalla();
+	
+}
+
+void buscarGanador(Partida *partida){
+	Jugador *jug = clist_first(partida->jugadores);
+	Jugador *inicio = jug;
+	do{
+		if(strcmp(jug->estado, "Jugando") == 0 && jug->fichas > 0){
+			partida->ganador = jug;
+			return;
+		}
+		jug = clist_next(partida->jugadores);
+	} while(jug != inicio);
+	partida->ganador = NULL; // No hay ganador
 }
 
 void iniciarPartida(){
@@ -669,7 +684,7 @@ void iniciarPartida(){
 
 	//antes iniciarRonda(partida,IArand);
 	do{	
-
+		if (contarJugadoresActivos(partida.jugadores, clist_first(partida.jugadores)) == 1) break;
 		//1.-En cada ronda aumentar las ciegas (menor y mayor) 
 		//2.-Si el jugador, mostrar directamente el ganador
 
@@ -698,8 +713,11 @@ void iniciarPartida(){
 		partida.siguienteApuesta = siguienteApuesta; //parte
 
 		partida.ronda++;
-	}while(partida.numJugadores > 1);
 
-	//definirGanadorFinal();
+	}while(1);
+
+	buscarGanador(&partida);
+
+	if (partida.ganador) mostrarGanadorFinal(&partida);
 }
 
