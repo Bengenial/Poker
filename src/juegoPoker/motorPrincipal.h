@@ -28,7 +28,7 @@ static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apue
 
 void limpiarManos(Partida *partida);    //Limpia las manos de los jugadores al inicio de una nueva ronda, reiniciando sus estados y apuestas
 
-void logicaJugador(Jugador *actual, int apuestaMax, Partida *partida, 
+void logicaJugador(Jugador *actual, int *apuestaMax, Partida *partida, 
     int *jugadoresPendientes, int *salir, Jugador *inicio, int *cantidad, Jugador *jug);    //Lógica para que un jugador humano tome decisiones en su turno, mostrando opciones y procesando la entrada del usuario
 
 void logicaBot(Jugador *actual, int *apuestaMax, Partida *partida, 
