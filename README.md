@@ -46,7 +46,7 @@ Asegúrate de tener un compilador de C (como GCC) y, opcionalmente, la utilidad 
 
 Puedes compilar y ejecutar el proyecto de tres maneras diferentes:
 
-#### 🔹 Método 1: Script `build.bat` (Para Windows)
+#### 🔹 Método 1: Script `build.bat` (Para Windows) (recomendado para una ventana completa)
 
 - Ejecuta el script haciendo doble clic en él o escribiendo `build.bat` en la consola.  
 El ejecutable `poker.exe` se creará en la carpeta `build`.
@@ -60,7 +60,7 @@ El ejecutable `poker.exe` se creará en la carpeta `build`.
 
 Asegúrate de tener un archivo `Makefile` en la raíz del proyecto
 
-- `make` o `make all`: compila el proyecto.
+- `make`: compila el proyecto.
 - `make run`: compila (si es necesario) y ejecuta el juego.
 - `make clean`: elimina la carpeta `build` y el ejecutable.
 
@@ -106,15 +106,27 @@ Cuántos jugadores bots van a jugar? (1-9)
 ### 2. Comienzo de la Ronda
 
 ```text
-=============
+================
 Ronda numero : 1
-=============
+================
 
-JUGADOR = Humano es EMPIEZA
-JUGADOR = Bot 1 es BOTON
-JUGADOR = Bot 2 es CIEGA MENOR
-JUGADOR = Bot 3 es CIEGA MAYOR
 
+.----------------------------------------.
+|   TURNOS JUGADORES (arriba -> abajo)   |
+|--------------------|-------------------|
+| Jugador            | Rol               |
+|--------------------|-------------------|
+| Benja              | Habla Primero     |
+| Bot 1              | BOTON (Dealer)    |
+| Bot 2              | CIEGA MENOR       |
+| Bot 3              | CIEGA MAYOR       |
+'----------------------------------------'
+
+
+Presione una tecla para continuar...
+```
+
+```text
 MESA ACTUAL:
 BOTE: 15
 --------------------------------------------------
@@ -145,16 +157,22 @@ Humano sube la apuesta a 20.
 Presione una tecla para continuar...
 
 MESA ACTUAL:
-BOTE: 45
+BOTE: 40
 
-Turno de Bot 2
+.---------------------.
+|PRE-FLOP             |
+|CIEGA MAYOR: 10      |
+.---------------------.
+
+Turno de Bot 3
 CIEGA MAYOR
+
 
 Fichas: 90 | Apuesta actual: 10 | Apuesta máxima: 20
 
 OPCIONES
-Bot 2 se puso nervioso...
-Bot 2 iguala la apuesta.
+Bot 3 esta sudando...
+Bot 3 iguala la apuesta
 Presione una tecla para continuar...
 ```
 
@@ -165,13 +183,18 @@ Presione una tecla para continuar...
 ```text
 MESA ACTUAL:
 BOTE: 55
---------------------------------------------------
-FLOP: 5 ♠   K ♦   J ♣
+
+.---------------------.
+|        FLOP         |
+.---------------------.
+Carta [1]: 5 ♠
+Carta [2]: K ♥
+Carta [3]: A ♦
 
 Turno de Bot 2
-CIEGA MAYOR
+CIEGA MENOR
 
-Fichas: 80 | Apuesta actual: 0 | Apuesta máxima: 0
+Fichas: 90 | Apuesta actual: 0 | Apuesta máxima: 0
 ...
 ```
 

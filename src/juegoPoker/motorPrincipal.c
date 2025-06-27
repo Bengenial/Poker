@@ -842,6 +842,8 @@ void iniciarPartida(){
 
 		if (contarJugadoresActivos(partida.jugadores, jug) == 1) break;
 
+        printf("=================\nRonda numero : %d\n=================\n\n", partida.ronda);
+
 		printf("\n.----------------------------------------.\n");
         printf("|   TURNOS JUGADORES (arriba -> abajo)   |\n");
         printf("|--------------------|-------------------|\n");

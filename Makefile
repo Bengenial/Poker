@@ -1,19 +1,27 @@
+# Makefile para compilar el juego de Poker Texas Hold'em
+
+# Variables
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99
-SRCS = src/poker.c src/juegoPoker/*.c src/tdas/*.c
-TARGET_DIR = build
-TARGET = $(TARGET_DIR)/poker
+SRC = src/poker.c $(wildcard src/juegoPoker/*.c) $(wildcard src/tdas/*.c)
+OUT_DIR = build
+OUT_EXE = $(OUT_DIR)/poker.exe
 
-all: $(TARGET)
+# Regla por defecto
+all: $(OUT_EXE)
 
-$(TARGET): $(SRCS)
-	@mkdir -p $(TARGET_DIR)
-	$(CC) $(CFLAGS) $^ -o $@
+# Crear el ejecutable
+$(OUT_EXE): $(SRC)
+	@echo "🛠 Compilando el juego de Poker Texas Hold'em..."
+	@mkdir -p $(OUT_DIR)
+	$(CC) $(SRC) -o $(OUT_EXE)
+	@echo "✅ Compilación exitosa."
 
+# Ejecutar el juego
 run: all
-	./$(TARGET)
+	@echo "🚀 Ejecutando el juego..."
+	@./$(OUT_EXE)
 
+# Limpiar archivos generados
 clean:
-	rm -rf $(TARGET_DIR)
-
-.PHONY: all run clean
+	@echo "🧹 Limpiando..."
+	rm -rf $(OUT_DIR)
