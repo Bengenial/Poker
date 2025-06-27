@@ -128,9 +128,6 @@ void moverIzquierdaBoton(Partida *partida){
 
 }
 
-/*void repartirBote(){
-	
-}*/
 
 void definirGanador(Partida *partida){
 	printf("\n=== SHOWDOWN ===\n");
@@ -165,143 +162,6 @@ void definirGanador(Partida *partida){
         return;
     }
 	
-	//vamos a probar esto (perdon benjoid xd)
-	/*
-	int boteNum = 1; //inicializamos el primer bote, puede haber más de 1
-	while (1){ //se ejecuta hasta que se cumpla alguna de estas condiciones
-
-		//ponemos 999999 que es un numero exagerado por si acaso en un futuro supera las 1000 fichas por partida
-		int apuestaMinimaDelBote = 999999;//ya que sirve para buscar el más chico
-        for (int i = 0; i < numJugadoresActivos; i++) {
-            if (jugadoresEvaluados[i].apuestaRestante > 0 && jugadoresEvaluados[i].apuestaRestante < apuestaMinimaDelBote) {
-                apuestaMinimaDelBote = jugadoresEvaluados[i].apuestaRestante;
-            }
-        }
-
-        // Si no encontramos apuestas restantes, ya repartimos todo el dinero.
-        if (apuestaMinimaDelBote == 999999) {
-            break; // y salimos 
-        }
-
-        // Si no, creamos el bote y definimos los jugadores elegibles
-        int boteActual = 0;
-        JugadorEvaluado* jugadoresElegibles[10];
-        int numJugadoresElegibles = 0;
-
-        for (int i = 0; i < numJugadoresActivos; i++) {
-			//Si todavia tiene money, es posible canditato
-            if (jugadoresEvaluados[i].jugador->apuesta > (jugadoresEvaluados[i].jugador->apuesta - jugadoresEvaluados[i].apuestaRestante) ) {
-                jugadoresElegibles[numJugadoresElegibles] = &jugadoresEvaluados[i];
-                numJugadoresElegibles++;
-            }
-        }
-        
-        //Luego recolectamos el dinero de las apuestas de los jugadores para este bote 
-        for (int i = 0; i < numJugadoresActivos; i++){
-            if(jugadoresEvaluados[i].apuestaRestante > 0){
-                int contribucion = (jugadoresEvaluados[i].apuestaRestante < apuestaMinimaDelBote) ? jugadoresEvaluados[i].apuestaRestante : apuestaMinimaDelBote;
-                boteActual += contribucion;
-                jugadoresEvaluados[i].apuestaRestante -= contribucion;
-            }
-        }
-        
-		//ver si implemento esto, es para un posible error
-		if(numJugadoresElegibles == 0)
-		{
-			continue; //no lo temrino de entender, pero es como pa un caso super específico
-		}
-
-        //Y encontramos al ganador/es SOLO entre los elegibles para ESTE bote (potente)
-        ManoEvaluada mejorManoDelBote = jugadoresElegibles[0]->mano;
-        for (int i = 1; i < numJugadoresElegibles; i++) {
-            if (jugadoresElegibles[i]->mano.puntuacion > mejorManoDelBote.puntuacion) {
-                mejorManoDelBote = jugadoresElegibles[i]->mano;
-            }
-        }
-
-        // Ya al final repartimos el dinero del bote actual a los ganadores
-        Jugador* ganadoresFinales[10];
-        int numGanadoresFinales = 0;
-        for (int i = 0; i < numJugadoresElegibles; i++) {
-            if (jugadoresElegibles[i]->mano.puntuacion == mejorManoDelBote.puntuacion) {
-                ganadoresFinales[numGanadoresFinales] = jugadoresElegibles[i]->jugador;
-                numGanadoresFinales++;
-            }
-        }
-        
-		//Aquí imprimimos de acorde si fue el primer o segundo bote
-        if (boteNum == 1) printf("\n=== Bote Principal de %d fichas ===\n", boteActual);
-        else printf("\n=== Bote Secundario #%d de %d fichas ===\n", boteNum - 1, boteActual);
-
-        int fichasPorGanador = boteActual / numGanadoresFinales;
-        int resto = boteActual % numGanadoresFinales;
-
-        for (int i = 0; i < numGanadoresFinales; i++) {
-            int fichasARecibir = fichasPorGanador;
-            if (i == 0) fichasARecibir += resto;
-
-            printf(" - %s gana %d fichas con ", ganadoresFinales[i]->nombre, fichasARecibir);
-            mostrarTipoMano(mejorManoDelBote.tipo);
-            printf("\n");
-            ganadoresFinales[i]->fichas += fichasARecibir;
-        }
-
-        boteNum++;
-    } // Y ya estarían los botes repartidos (supuestamente)
-
-	printf("\n===RESULTADO===\n");
-	// Encontrar la mejor puntuación
-     int mejorPuntuacion = 0;
-    for (int i = 0; i < numJugadoresActivos; i++) {
-        if (jugadoresEvaluados[i].mano.puntuacion > mejorPuntuacion) {
-            mejorPuntuacion = jugadoresEvaluados[i].mano.puntuacion;
-        }
-    }
-
-    // Encontrar a todos los jugadores con esa puntuación 
-    Jugador *ganadores[10];
-    int numGanadores = 0;
-    for (int i = 0; i < numJugadoresActivos; i++) {
-        if (jugadoresEvaluados[i].mano.puntuacion == mejorPuntuacion) {
-            ganadores[numGanadores] = jugadoresEvaluados[i].jugador;
-            numGanadores++;
-        }
-    }
-
-    // Imprimir el resumen SIN repartir dinero (porque ya se hizo)
-    if (numGanadores == 1) {
-        printf("La mejor mano la tuvo: %s\n", ganadores[0]->nombre);
-        
-        // Buscamos y mostramos el tipo de mano que tuvo
-        for (int i = 0; i < numJugadoresActivos; i++) {
-            if (jugadoresEvaluados[i].jugador == ganadores[0]) {
-                printf("Con: ");
-                mostrarTipoMano(jugadoresEvaluados[i].mano.tipo);
-                printf("\n");
-                break;
-            }
-        }
-    } else {
-        printf("Hubo un empate por la mejor mano entre %d jugadores:\n", numGanadores);
-        for (int i = 0; i < numGanadores; i++) {
-            printf(" - %s\n", ganadores[i]->nombre);
-        }
-    }
-
-
-    partida->mesa.bote = 0; // Reiniciar el bote para la siguiente ronda
-
-    // Bucle final para mostrar las fichas actualizadas de todos los jugadores
-    printf("\nFichas después de la mano:\n");
-    jug = clist_first(partida->jugadores);
-    inicio = jug;
-    do {
-        printf("%s: %d fichas\n", jug->nombre, jug->fichas);
-        jug = clist_next(partida->jugadores);
-    } while (jug != inicio);*/
-	
-
-
 
 	//bruno
 	int mejorPuntuacion = jugadoresEvaluados[0].mano.puntuacion;
@@ -727,7 +587,7 @@ void iniciarRonda(Partida *partida){
 	repartirCartas(partida);
 	rondaDeApuestas(partida);	//primera ronda de apuestas
 
-	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){ //si solo queda un jugador activo
+	if (jugadoresJugando(partida->jugadores, clist_first(partida->jugadores)) == 1){ //si solo queda un jugador activo
 		mostrarGandorFold(partida);
 		limpiarManos(partida);
 		return;
@@ -737,7 +597,7 @@ void iniciarRonda(Partida *partida){
 	crearFlop(partida); //(3 cartas)
 	rondaDeApuestas(partida);	//segunda ronda de apuestas
 
-	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){ //si solo queda un jugador activo
+	if (jugadoresJugando(partida->jugadores, clist_first(partida->jugadores)) == 1){ //si solo queda un jugador activo
 		mostrarGandorFold(partida);
 		limpiarManos(partida);
 		return;
@@ -747,7 +607,7 @@ void iniciarRonda(Partida *partida){
 	crearTurn(partida); //(1 carta)
 	rondaDeApuestas(partida);	 //tercera ronda de apuestas
 
-	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){	 //si solo queda un jugador activo
+	if (jugadoresJugando(partida->jugadores, clist_first(partida->jugadores)) == 1){	 //si solo queda un jugador activo
 		mostrarGandorFold(partida);
 		limpiarManos(partida);
 		return;
@@ -756,7 +616,7 @@ void iniciarRonda(Partida *partida){
 
 	crearRiver(partida); //(1 carta)
 	rondaDeApuestas(partida); //ultima ronda de apuestas
-	if (contarJugadoresActivos(partida->jugadores, clist_first(partida->jugadores)) == 1){ 	//si solo queda un jugador activo
+	if (jugadoresJugando(partida->jugadores, clist_first(partida->jugadores)) == 1){ 	//si solo queda un jugador activo
 		mostrarGandorFold(partida);
 		limpiarManos(partida);
 		return;
@@ -783,6 +643,38 @@ void buscarGanador(Partida *partida){
 		jug = clist_next(partida->jugadores);
 	} while(jug != inicio);
 	partida->ganador = NULL; // No hay ganador
+}
+
+void liberarMemoria(Partida *partida)
+{
+    printf("\nLiberando memoria...\n");
+     while (clist_size(partida->jugadores) > 0) 
+    {
+        // Sacamos el ultimo jugador
+        Jugador *jugadorLiberar = clist_popFront(partida->jugadores);
+
+        if (jugadorLiberar != NULL) {
+            
+            // Si tenemos la mano todavia
+            if (jugadorLiberar->mano != NULL) {
+                // limpiamos su mano
+                list_clean(jugadorLiberar->mano); 
+
+                // y luego liberamos su mano
+                free(jugadorLiberar->mano);
+            }
+
+            // y liberamos el jugador en si
+            free(jugadorLiberar);
+        }
+    }
+
+    //luego la lista de jugadores como tal se libera tambien
+    free(partida->jugadores);
+    partida->jugadores = NULL; 
+
+    printf("Se libero la memoria correctamente :D\n\n");
+
 }
 
 void iniciarPartida(){
@@ -836,11 +728,24 @@ void iniciarPartida(){
 	
 	//arrglar repartiR BOTE, fakin bots se llevan todo
 	do{	
-        
+        int opcion;
+        printf("Si deseas salir de la partida, presiona 9.\n");
+        scanf("%d", &opcion);
+        getchar();
+        if (opcion == 9){
+            mostrarSalida(&partida);
+            break;
+        }
+        limpiarPantalla();
+
 		Jugador *jug = partida.siguienteApuesta;
     	Jugador *inicio = jug;
 
-		if (contarJugadoresActivos(partida.jugadores, jug) == 1) break;
+		if (contarJugadoresActivos(partida.jugadores, clist_first(partida.jugadores)) == 1){
+            buscarGanador(&partida);
+            if (partida.ganador) mostrarGanadorFinal(&partida);
+                break;
+        }
 
         printf("=================\nRonda numero : %d\n=================\n\n", partida.ronda);
 
@@ -896,9 +801,8 @@ void iniciarPartida(){
 
 	}while(1);
 
-	buscarGanador(&partida);
+    presioneTeclaParaContinuar();
+    liberarMemoria(&partida);
 
-	if (partida.ganador) mostrarGanadorFinal(&partida);
-	presioneTeclaParaContinuar();
 }
 

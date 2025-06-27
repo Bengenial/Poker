@@ -21,4 +21,6 @@ void mostrarGandorFold(Partida *partida);   //Muestra el ganador de la partida o
 
 void mostrarGanadorFinal(Partida *partida);   //Muestra el ganador final de la partida
 
+void mostrarSalida(Partida *partida);  //Muestra un mensaje de salida del juego
+
 #endif

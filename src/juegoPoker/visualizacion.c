@@ -177,12 +177,45 @@ void mostrarGandorFold(Partida *partida){
 
 void mostrarGanadorFinal(Partida *partida) {
 	limpiarPantalla();
-	printf("\n=== RESULTADO FINAL ===\n");
+	printf("=== RESULTADO FINAL ===\n\n");
 	Sleep(3000);
 	
 	
 	printf("Ganador de la partida: %s\n", partida->ganador->nombre);
 	printf("Fichas finales: %d\n", partida->ganador->fichas);
+	
+	Sleep(3000);
+	printf("\n\n");
+	arcoiris("GRACIAS POR JUGAR\n");
+}
+
+void mostrarSalida(Partida *partida){
+	limpiarPantalla();
+	printf("=== PARTIDA TERMINADA ===\n\n");
+	Sleep(3000);
+
+	Jugador *jug = clist_first(partida->jugadores);
+	while (jug != NULL) {
+		if (!jug->esBot) {
+			break;
+		}
+		jug = clist_next(partida->jugadores);
+	}
+	if (jug->fichas == 0){
+		printf("Lo sentimos %s\n", jug->nombre);
+		printf("Has perdido todas tus fichas, ¡mejor suerte la próxima vez!\n");
+	} else if(jug->fichas > 0 && jug->fichas < 100){
+		printf("Una salida estratégica %s\n", jug->nombre);
+		printf("Has terminado con %d fichas, ¡sigue practicando!\n", jug->fichas);
+	} else if (jug->fichas == 100) {
+		printf("Bueno, %s\n", jug->nombre);
+		printf("Saliste con las mismas fichas que cuando entraste\n");
+	}
+	else {
+		printf("Buen juego %s\n", jug->nombre);
+		printf("Te has llevado %d fichas\n", jug->fichas);
+	}
+	
 	
 	Sleep(3000);
 	printf("\n\n");

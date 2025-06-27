@@ -41,6 +41,25 @@ void eliminarJugadores(CList *jugadores)
 		jug = clist_next(jugadores);
 	} while ( jug != inicio );
 }
+int jugadoresJugando(CList *jugadores, Jugador *actual) {
+	int n = 0;
+	Jugador *jug = clist_first(jugadores);
+	if (!jug) return 0;
+	Jugador *inicio = jug;
+	do {
+		if (strcmp(jug->estado, "Jugando") == 0) n++;
+		jug = clist_next(jugadores);
+	} while (jug != inicio);
+
+	if (n > 1){
+		do{
+			if(jug == actual) break;
+			jug = clist_next(jugadores);
+		}while (jug != actual);
+	}
+
+	return n;
+}
 
 int contarJugadoresActivos(CList *jugadores, Jugador *actual) {
 
@@ -63,7 +82,6 @@ int contarJugadoresActivos(CList *jugadores, Jugador *actual) {
 			jug = clist_next(jugadores);
 		}while (jug != actual);
 	}
-	
 	
     return n;
 }
