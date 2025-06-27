@@ -27,6 +27,7 @@ El flujo de una partida completa sigue las reglas estándar de Texas Hold'em:
 
 ## 🧱 Estructuras de Datos Utilizadas
 
+- **Partida** Una `struct` que almacena a los jugadores, la mesa y la baraja.
 - **Jugador:** Una `struct` que almacena el nombre, fichas, estado actual y apuesta del jugador.
 - **Mano del Jugador:** Un TDA Lista (`List`) para gestionar las dos cartas privadas de cada jugador.
 - **Mesa de Jugadores:** Un TDA Lista Circular (`CList`) para manejar los turnos de forma eficiente y continua.
@@ -230,4 +231,3 @@ Dos Pares
 
 - La inteligencia artificial de los bots es funcional pero básica. Está diseñada para tomar decisiones basadas en la fuerza de su mano, pero puede no siempre elegir la jugada más óptima desde una perspectiva estratégica avanzada.
 - El juego está diseñado para terminales de texto. La visualización puede variar ligeramente dependiendo de la configuración de la consola utilizada.
-- 
