@@ -7,7 +7,7 @@ Este proyecto es una implementación del juego de póker en su modalidad Texas H
 
 El propósito de este proyecto es simular una partida de póker completa, gestionando múltiples jugadores (humanos y bots controlados por una IA básica), rondas de apuestas dinámicas, la lógica de evaluación de manos y la distribución de premios.
 
-El juego de Póker Texas Hold'em sigue unas reglas especificas revisar aqui: [REGLAS](https://es.wikipedia.org/wiki/Texas_hold_%27em#Reglas)
+El juego de Póker Texas Hold'em sigue reglas específicas que puedes revisar [aquí](https://es.wikipedia.org/wiki/Texas_hold_%27em).
 
 ---
 
