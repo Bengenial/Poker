@@ -161,6 +161,10 @@ void moverIzquierdaBoton(Partida *partida){
 
 }
 
+/*void repartirBote(){
+	
+}*/
+
 void definirGanador(Partida *partida){
 	printf("\n=== SHOWDOWN ===\n");
 	Sleep(300);
@@ -661,7 +665,7 @@ void iniciarPartida(){
 	partida.baraja = baraja;
 	partida.ronda = 1;
 	
-
+	//arrglar repartiR BOTE, fakin bots se llevan todo
 	//antes iniciarRonda(partida,IArand);
 	do{	
 
