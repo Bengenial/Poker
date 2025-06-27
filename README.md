@@ -118,9 +118,10 @@ JUGADOR = Bot 3 es CIEGA MAYOR
 MESA ACTUAL:
 BOTE: 15
 --------------------------------------------------
-(Pre-Flop)
+PRE-FLOP
+CIEGA MAYOR
 
-Turno de Humano
+Turno de Usuario
 
 Tus cartas:
 K ♥

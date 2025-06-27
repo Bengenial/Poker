@@ -78,26 +78,27 @@ void mostrarMesa(Partida *partida)
 {	
 	printf("MESA ACTUAL:\n");
 	printf("BOTE: %d\n\n", partida->mesa.bote);
-	printf("--------------------------------------------------\n");
+	printf(".---------------------.\n");
 	if(partida->mesa.total == 0){
-	printf("\033[5;92mPRE-FLOP\033[0m\n");
-	printf("CIEGA MAYOR: %d\n", partida->mesa.ciegaMayor);
+	printf("|\033[5;92mPRE-FLOP\033[0m             |\n");
+	printf("|CIEGA MAYOR: %d      |\n", partida->mesa.ciegaMayor);
 	} 
 
 
 	switch (partida->mesa.total)
 	{
 	case 3:
-		printf("\033[5;93mFLOP\n\033[0m");
+		printf("|\033[5;93m        FLOP\033[0m         |\n");
 		break;
 	case 4:
-		printf("\033[5;38;5;208mTURN\033[0m\n");
+		printf("|\033[5;38;5;208m        TURN\033[0m         |\n");
 		break;
 	case 5:
-		printf("\033[5;91mRIVER\033[0m\n");
+		printf("|\033[5;91m        RIVER\033[0m        |\n");
 		break;
 	}
-	
+	printf(".---------------------.\n");
+
 	for(int k = 0 ; k < partida->mesa.total; k++)
 	{
 		printf("Carta [%d]: ", k+1);

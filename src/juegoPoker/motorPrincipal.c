@@ -835,26 +835,49 @@ void iniciarPartida(){
 	partida.ronda = 1;
 	
 	//arrglar repartiR BOTE, fakin bots se llevan todo
-	//antes iniciarRonda(partida,IArand);
 	do{	
-		
+        
 		Jugador *jug = partida.siguienteApuesta;
     	Jugador *inicio = jug;
 
 		if (contarJugadoresActivos(partida.jugadores, jug) == 1) break;
 
-		printf("===================\nRonda numero : %d\n===================\n\n", partida.ronda);
-		do {
-			printf("%s es ", jug->nombre);
-			if(jug == partida.jugadorBoton) printf("BOTON\n");
-			else if (jug == partida.jugadorCiegaMayor) printf("CIEGA MAYOR\n");
-			else if (jug == partida.jugadorCiegaMenor) printf("CIEGA MENOR\n");
-			else if (jug == partida.siguienteApuesta) printf("EMPIEZA\n");
-			else printf("NORMAL\n");
+		printf("\n.----------------------------------------.\n");
+        printf("|   TURNOS JUGADORES (arriba -> abajo)   |\n");
+        printf("|--------------------|-------------------|\n");
+        printf("| Jugador            | Rol               |\n");
+        printf("|--------------------|-------------------|\n");
 
-			jug = clist_next(partida.jugadores);
-		} while (jug != inicio);
+        do {
+            char rol[20]; // Variable para guardar la descripción del rol
+            if (strcmp(jug->estado, "Jugando") == 0) {
+                if (jug == partida.jugadorBoton) {
+                    strcpy(rol, "BOTON (Dealer)");
+                } else if (jug == partida.jugadorCiegaMayor) {
+                    strcpy(rol, "CIEGA MAYOR");
+                } else if (jug == partida.jugadorCiegaMenor) {
+                    strcpy(rol, "CIEGA MENOR");
+                } else if (jug == partida.siguienteApuesta) {
+                    strcpy(rol, "Habla Primero");
+                } else {
+                    strcpy(rol, "-");
+                }
+
+                // 2. Imprime la fila completa con formato
+                // %-18s significa: "imprime una cadena de texto, alineada a la izquierda,
+                // en un espacio de 18 caracteres". Esto crea las columnas.
+                printf("| %-18s | %-18s|\n", jug->nombre, rol);
+                }
+                // 1. Determina el texto del rol antes de imprimir
+            
+
+            jug = clist_next(partida.jugadores);
+        } while (jug != inicio);
+
+        printf("'----------------------------------------'\n\n");
         printf("\n");
+        presioneTeclaParaContinuar();
+        limpiarPantalla();
 		//Inicia la ronda omg
 		iniciarRonda(&partida);
 		boton = clist_next(partida.jugadores); // Botón
