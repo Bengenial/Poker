@@ -7,7 +7,7 @@ void arcoiris(char *texto);   //Muestra un texto con colores simulando un arcoí
 
 void intro(int timeset);    //Una introducción al juego, mostrando un mensaje de bienvenida y animaciones iniciales
 
-void mostrarMesa(Mesa mesa);    //Muestra las cartas de la mesa, incluyendo el flop, turn y river
+void mostrarMesa(Partida *partida);    //Muestra las cartas de la mesa, incluyendo el flop, turn y river
 
 void mostrarCartasJugador(Jugador *jugador);    //Muestra las cartas de un jugador, incluyendo su mano y el estado de la partida (definir ganador)
 

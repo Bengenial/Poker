@@ -74,11 +74,12 @@ void mostrarCarta(Carta carta)
 	
 }
 
-void mostrarMesa(Mesa mesa)
+void mostrarMesa(Partida *partida)
 {	
 	printf("MESA ACTUAL:\n");
-	printf("BOTE: %d\n\n", mesa.bote);
-	switch (mesa.total)
+	printf("BOTE: %d\n\n", partida->mesa.bote);
+
+	switch (partida->mesa.total)
 	{
 	case 3:
 		printf("FLOP\n");
@@ -91,10 +92,10 @@ void mostrarMesa(Mesa mesa)
 		break;
 	}
 	
-	for(int k = 0 ; k < mesa.total; k++)
+	for(int k = 0 ; k < partida->mesa.total; k++)
 	{
 		printf("Carta [%d]: ", k+1);
-		mostrarCarta(mesa.cartas[k]);
+		mostrarCarta(partida->mesa.cartas[k]);
 		printf("\n");
 	}
 	

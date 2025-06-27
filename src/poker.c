@@ -23,6 +23,7 @@ int main(){
 	SetConsoleOutputCP(CP_UTF8); //gracias compañero de telegram
 
 	limpiarPantalla();
+
 	//intro(300));
 	int IArand;
 

@@ -131,7 +131,7 @@ void moverIzquierdaBoton(Partida *partida){
 void definirGanador(Partida *partida){
 	printf("\n=== SHOWDOWN ===\n");
 	Sleep(300);
-	mostrarMesa(partida->mesa);
+	mostrarMesa(partida);
 	Sleep(300);
 	printf("\n");
 	
@@ -432,7 +432,7 @@ void rondaDeApuestas(Partida *partida){
 
 			int opcion, cantidad = 0;
 
-			mostrarMesa(partida->mesa);
+			mostrarMesa(partida);
 
 			printf("\nTurno de %s\n", actual->nombre);
 			if (actual == partida->jugadorBoton) printf("BOTÓN\n\n");
