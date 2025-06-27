@@ -2,8 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+//TDAS
+#include "../tdas/extra.h"
+
 //JUEGOPOKER
 #include "accionesJugador.h" 
+#include "visualizacion.h"
 #include "motorPrincipal.h"
 
 //Gestion de jugadores
@@ -25,12 +29,11 @@ Jugador *crearJugador(char *nombre, int esBot){
 	return jugador;
 }
 
-void eliminarJugadores(CList *jugadores) // hacer posible mapa hash
+void eliminarJugadores(CList *jugadores)
 {
 	Jugador *jug = clist_first(jugadores);
 	Jugador *inicio = jug;
 	do{
-		
 		if ( jug->fichas == 0 )
 		{
 			strcpy(jug->estado, "Eliminado");
@@ -61,6 +64,26 @@ int contarJugadoresActivos(CList *jugadores, Jugador *actual) {
 		}while (jug != actual);
 	}
 	
+	
+    return n;
+}
+
+int contarJugadoresPendientes(CList *jugadores, Jugador *actual) {
+    int n = 0;
+    Jugador *jug = clist_first(jugadores);
+    if (!jug) return 0;
+    Jugador *inicio = jug;
+    do {
+        if (strcmp(jug->estado, "Jugando") == 0 && jug->fichas > 0 && !jug->yaActuo) n++;
+        jug = clist_next(jugadores);
+    } while (jug != inicio);
+
+
+	//devolver actual (current)
+	do{
+		if(jug == actual) break;
+		jug = clist_next(jugadores);
+	}while (jug != actual);
 	
     return n;
 }
@@ -115,13 +138,19 @@ void checkOrCall(Jugador *jugadorActual, int apuestaActual, Partida *partida, in
 			jugadorActual->fichas -= diferencia;
 			jugadorActual->apuesta += diferencia;
 			partida->mesa.bote += diferencia;
-			printf("%s iguala la apuesta.\n", jugadorActual->nombre);
-			if (jugadorActual->fichas == 0) printf("%s va all-in\n", jugadorActual->nombre);
+			printf("%s \033[1;93miguala la apuesta.\033[0m\n", jugadorActual->nombre);
+			if (jugadorActual->fichas == 0){
+				printf("%s va ", jugadorActual->nombre);
+				arcoiris("all-in");
+				puts("");
+			} 
 		} else {
 			partida->mesa.bote += jugadorActual->fichas;
 			jugadorActual->apuesta += jugadorActual->fichas;
 			jugadorActual->fichas = 0;
-			printf("%s va all-in.\n", jugadorActual->nombre);
+			printf("%s va ", jugadorActual->nombre);
+			arcoiris("all-in");
+			puts("");
 		}
 	}
 	jugadorActual->yaActuo = 1;
@@ -180,12 +209,12 @@ void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPen
 	actual->yaActuo = 1;
 	(*jugadoresPendientes) = contarJugadoresPendientes(partida->jugadores, actual);
 	inicio = actual;
+	presioneTeclaParaContinuar();
 }
 
 void fold(Jugador *actual, int *jugadoresPendientes, Partida *partida, int *salir){
-	//nuevo
 	strcpy(actual->estado, "Retirado");
-	printf("%s se retira.\n", actual->nombre);
+	printf("%s \033[1;95mse retira.\033[0m\n", actual->nombre);
 	actual->yaActuo = 1;
 
 	//solo restar si hay más de un jugador
@@ -203,6 +232,7 @@ void fold(Jugador *actual, int *jugadoresPendientes, Partida *partida, int *sali
 		} while (actual != inicio);
 		
 		(*salir) = 0;
-		(*jugadoresPendientes) = 0;
+		(*jugadoresPendientes) = 0; //no crear un bucle infinito
 	}
+	presioneTeclaParaContinuar();
 }

@@ -15,6 +15,8 @@ void repartirCartas(Partida *partida);      //Reparte las cartas a los jugadores
 //Logica de evaluacion
 int compararCartas(const void *a, const void *b);   //Compara dos cartas por su valor
 
+void combinarCartasJugador(List *manoJugador, Mesa mesa, Carta cartasCombinadas[]);     //Combina las cartas del jugador con las de la mesa para formar una mano completa
+
 ManoEvaluada evaluarMano(Carta cartas[], int numCartas);    //Evalua la mano de un jugador basándose en las cartas dadas
 
 //Funciones auxiliares de apoyo

@@ -12,6 +12,7 @@ void eliminarJugadores(CList *jugadores); //Elimina los jugadores sin fichas
 
 int contarJugadoresActivos(CList *jugadores, Jugador *actual); //Cuenta los jugadores activos (con fichas y no retirados) y devuelve la cantidad
 
+int contarJugadoresPendientes(CList *jugadores, Jugador *actual);   //Cuenta los jugadores que están pendientes de actuar en la ronda actual, excluyendo al jugador actual
 //Acciones en rondaApuestas
 void checkOrCall(Jugador *jugadorActual, 
     int apuestaActual, Partida *partida, int *jugadoresPendientes); //Chequea o iguala la apuesta actual del jugador

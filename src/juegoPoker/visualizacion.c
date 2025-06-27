@@ -11,6 +11,18 @@
 #include "estructuras.h"
 #include "accionesJugador.h"
 
+void arcoiris(char *texto){
+    // Colores ANSI para simular arcoíris
+    int colores[] = {31, 33, 32, 36, 34, 35}; // rojo, amarillo, verde, cyan, azul, magenta
+    int num_colores = sizeof(colores) / sizeof(colores[0]);
+
+    for (int i = 0; i < strlen(texto); i++) {
+        int color = colores[i % num_colores];
+        printf("\033[1;%dm%c", color, texto[i]); // 1;XXm activa color brillante
+    }
+
+    printf("\033[0m"); // Reset al final
+}
 
 void intro(int timeset){
 	limpiarPantalla();
@@ -42,23 +54,23 @@ void mostrarCarta(Carta carta)
 {
 	if(strcmp(carta.color, "corazones") == 0) // son iguales
 	{ 
-		printf("\033[1;31m%s ♥\033[0m", carta.valor);
+		printf("\033[1;91m%s ♥\033[0m", carta.valor);
 		return;
 	}
 
 	if(strcmp(carta.color, "diamantes") == 0)
 	{ 
-		printf("\033[1;34m%s ♦\033[0m", carta.valor);
+		printf("\033[1;94m%s ♦\033[0m", carta.valor);
 		return;
 	}
 	
 	if(strcmp(carta.color, "picas") == 0)
 	{ 
-		printf("\033[5;90m%s ♠\033[0m", carta.valor);
+		printf("\033[1;90m%s ♠\033[0m", carta.valor);
 		return;
 	}
 	
-	printf("\033[1;32m%s ♣\033[0m", carta.valor);
+	printf("\033[1;92m%s ♣\033[0m", carta.valor);
 	
 }
 
@@ -81,7 +93,7 @@ void mostrarMesa(Mesa mesa)
 	
 	for(int k = 0 ; k < mesa.total; k++)
 	{
-		printf("Carta [%d]: ", k+1);//, mesa.cartas[k].valor);
+		printf("Carta [%d]: ", k+1);
 		mostrarCarta(mesa.cartas[k]);
 		printf("\n");
 	}
@@ -92,7 +104,6 @@ void mostrarCartasJugador(Jugador *jugador) {
     printf("%s: ", jugador->nombre);
     Carta *carta = list_first(jugador->mano);
     while (carta != NULL) {
-        //printf("%s", carta->valor);
 		mostrarCarta(*carta);
 		printf("   ");
         carta = list_next(jugador->mano);
@@ -149,18 +160,23 @@ void mostrarTipoMano(TipoMano tipo) {
 void mostrarGandorFold(Partida *partida){
 	printf("TODOS LOS JUGADORES SE HAN RETIRADO\n");
 	printf("EL JUGADOR %s ha ganado %d fichas\n", partida->ganador->nombre, partida->mesa.bote);
+
 	//repartir bote
 	partida->ganador->fichas += partida->mesa.bote;
 	partida->mesa.bote = 0;
 
 }
 
-/*void mostrarGanadorFinal(Partida *partida) {
+void mostrarGanadorFinal(Partida *partida) {
+	limpiarPantalla();
 	printf("\n=== RESULTADO FINAL ===\n");
 	Sleep(3000);
 	
-	if (partida->ganador) {
-		printf("Ganador de la partida: %s\n", partida->ganador->nombre);
-		printf("Fichas finales: %d\n", partida->ganador->fichas);
-	}
-}*/
+	
+	printf("Ganador de la partida: %s\n", partida->ganador->nombre);
+	printf("Fichas finales: %d\n", partida->ganador->fichas);
+	
+	Sleep(3000);
+	printf("\n\n");
+	arcoiris("GRACIAS POR JUGAR\n");
+}

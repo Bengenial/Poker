@@ -4,9 +4,6 @@
 #include "estructuras.h"
 
 //Funciones Auxiliares
-void combinarCartasJugador(List *manoJugador, Mesa mesa, Carta cartasCombinadas[]);     //Combina las cartas del jugador con las de la mesa para formar una mano completa
-
-int contarJugadoresPendientes(CList *jugadores, Jugador *actual);   //Cuenta los jugadores que están pendientes de actuar en la ronda actual, excluyendo al jugador actual
 
 int obtenerApuestaMaxima(CList *jugadores);     //Obtiene la apuesta máxima entre todos los jugadores activos en la partida
 
@@ -37,6 +34,8 @@ void logicaBot(Jugador *actual, int *apuestaMax, Partida *partida,
 void rondaDeApuestas(Partida *partida); //Gestiona una ronda de apuestas, permitiendo a los jugadores actuar en función de sus manos y las apuestas actuales
 
 void iniciarRonda(Partida *partida);    //Inicia una ronda de juego, gestionando las apuestas iniciales, repartiendo cartas y llevando a cabo las rondas de apuestas
+
+void buscarGanador(Partida *partida);   //Busca al ganador de la partida al final de una ronda, evaluando las manos de los jugadores activos y mostrando el resultado
 
 void iniciarPartida();  //Inicia una partida de poker, configurando los jugadores, la baraja y el estado inicial del juego
 

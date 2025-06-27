@@ -3,6 +3,7 @@
 
 #include "estructuras.h"
 
+void arcoiris(char *texto);   //Muestra un texto con colores simulando un arcoíris, útil para mensajes destacados
 
 void intro(int timeset);    //Una introducción al juego, mostrando un mensaje de bienvenida y animaciones iniciales
 
@@ -18,5 +19,6 @@ void mostrarTipoMano(TipoMano tipo);    //Muestra el tipo de mano que tiene un j
 
 void mostrarGandorFold(Partida *partida);   //Muestra el ganador de la partida o si un jugador ha hecho fold, actualizando el estado de la partida
 
+void mostrarGanadorFinal(Partida *partida);   //Muestra el ganador final de la partida
 
 #endif

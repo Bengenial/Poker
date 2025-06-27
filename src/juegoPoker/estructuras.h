@@ -41,7 +41,7 @@ typedef struct {        //representa un jugador en el juego
     int yaActuo;
     int hizoRiseCall;
     int allIn[2]; //primera casilla, va a ser 0 o 1, dependiendo si hiso all in o no, 
-                  //la segunda va a ser la cantidad del all in que hiso
+                  //la segunda va a ser la cantidad del all in que hiso (apuesta)
 } Jugador;
 
 typedef struct {        //representa un jugador evaluado con su mano y puntuación

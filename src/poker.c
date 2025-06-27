@@ -29,7 +29,7 @@ int main(){
 	char opcion;
 	do{
 		puts("=========================================");
-		puts("|\033[5;90m  ♠\033[5;31m   ♥\033[5;32m   ♣\033[5;34m   ♦\033[0m  POKER\033[5;34m  ♦\033[5;32m   ♣\033[5;31m   ♥\033[5;90m   ♠  \033[0m|");
+		puts("|\033[5;90m  ♠\033[5;91m   ♥\033[5;92m   ♣\033[5;94m   ♦\033[0m  POKER\033[5;94m  ♦\033[5;92m   ♣\033[5;91m   ♥\033[5;90m   ♠  \033[0m|");
 		puts("=========================================");
 		puts("1) Iniciar Partida");
 		puts("2) Salir");
@@ -43,7 +43,8 @@ int main(){
 		case '1':
 			//iniciarVentana();
 			iniciarPartida();
-			
+			return 0; // Termina el programa después de terminar la partida
+
 			break;
 		case '2':
 			//ahora es un toggle, será usado para que la IA no haga siempre las mejores decisiones. 
