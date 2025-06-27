@@ -323,58 +323,7 @@ Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax)
     // Si no se aplicó ninguna restricción, el bot realiza la acción que deseaba.
     return accionDeseada;
 }
-	
 
-/*
-	///cosa base
-    // --- LÓGICA PRE-FLOP (cuando no hay cartas en la mesa) ---
-    if (partida->mesa.total == 0) {
-        Carta *c1 = list_first(jugadorActual->mano);
-        Carta *c2 = list_next(jugadorActual->mano);
-        int val1 = obtenerValorCarta(c1->valor);
-        int val2 = obtenerValorCarta(c2->valor);
-
-        // Nivel 1: Manos Premium (Pares Altos, AKs, AQs) -> Siempre sube o resube
-        if ((val1 == val2 && val1 >= 11) || (val1 >= 13 && val2 >= 12 && strcmp(c1->color, c2->color) == 0)) {
-            return ACCION_RAISE;
-        }
-        // Nivel 2: Manos Buenas (Pares Medios, Conectores del mismo palo) -> Paga apuestas normales
-        else if ((val1 == val2 && val1 >= 7) || (val1 >= 10 && val2 >= 9 && strcmp(c1->color, c2->color) == 0)) {
-            if (apuestaActual < apuestaMax) return ACCION_CALL; // Paga si hay subida
-            else return ACCION_CHECK; // Pasa si no la hay
-        }
-        // Nivel 3: Manos Especulativas -> Paga solo si la apuesta es barata (la ciega)
-        else {
-            if (apuestaActual < apuestaMax) {
-                if (apuestaMax <= 10) return ACCION_CALL; // Paga la ciega
-                else return ACCION_FOLD; // Se retira ante una subida de verdad
-            } else {
-                return ACCION_CHECK;
-            }
-        }
-    }
-    // --- LÓGICA POST-FLOP (cuando ya hay cartas en la mesa) ---
-    else {
-        Carta cartasCombinadas[7];
-        combinarCartasJugador(jugadorActual->mano, partida->mesa, cartasCombinadas);
-        manoEvaluada = evaluarMano(cartasCombinadas, 2 + partida->mesa.total);
-
-        // La lógica que ya habíamos mejorado
-        if (apuestaActual < apuestaMax) { // Alguien subió
-            int diferencia = apuestaMax - apuestaActual;
-            if (manoEvaluada.puntuacion >= 3000000) return ACCION_RAISE; // Trío o mejor: resube
-            else if (manoEvaluada.puntuacion >= 1000000) { // Par o Dos Pares
-                if (diferencia <= 50) return ACCION_CALL; // Paga si no es caro
-                else return ACCION_FOLD;
-            } else {
-                return ACCION_FOLD; // Nada: retírate
-            }
-        } else { // Nadie ha subido
-            if (manoEvaluada.puntuacion >= 2000000) return ACCION_RAISE; // Dos Pares o mejor: apuesta
-            else return ACCION_CHECK; // Peor que eso: pasa
-        }
-    }
-}*/
 
 void logicaJugador(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPendientes, int *salir, Jugador *inicio, int *cantidad, Jugador *jug) {
     int opcion;
@@ -461,6 +410,7 @@ void logicaBot(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadore
     }
 
     //Sleep(1000); // Simula que el bot "piensa"
+
 
     Accion accionBot = tomarDecisiones(partida, actual, *apuestaMax);
 
@@ -648,7 +598,7 @@ void buscarGanador(Partida *partida){
 void liberarMemoria(Partida *partida)
 {
     printf("\nLiberando memoria...\n");
-     while (clist_size(partida->jugadores) > 0) 
+    while (clist_size(partida->jugadores) > 0) 
     {
         // Sacamos el ultimo jugador
         Jugador *jugadorLiberar = clist_popFront(partida->jugadores);
@@ -729,7 +679,8 @@ void iniciarPartida(){
 	//arrglar repartiR BOTE, fakin bots se llevan todo
 	do{	
         int opcion;
-        printf("Si deseas salir de la partida, presiona 9.\n");
+        printf("Salir de la partida [9].\n");
+        printf("En caso contrario ingrese otro numero: ");
         scanf("%d", &opcion);
         getchar();
         if (opcion == 9){
@@ -737,9 +688,10 @@ void iniciarPartida(){
             break;
         }
         limpiarPantalla();
+        
 
-		Jugador *jug = partida.siguienteApuesta;
-    	Jugador *inicio = jug;
+		Jugador *jug = clist_first(partida.jugadores);
+        Jugador *inicio = jug;
 
 		if (contarJugadoresActivos(partida.jugadores, clist_first(partida.jugadores)) == 1){
             buscarGanador(&partida);
@@ -787,6 +739,7 @@ void iniciarPartida(){
         limpiarPantalla();
 		//Inicia la ronda omg
 		iniciarRonda(&partida);
+
 		boton = clist_next(partida.jugadores); // Botón
     	ciegaMenor = clist_next(partida.jugadores); // Ciega menor
     	ciegaMayor = clist_next(partida.jugadores); // Ciega mayor

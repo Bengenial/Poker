@@ -233,3 +233,5 @@ Dos Pares
 
 - La inteligencia artificial de los bots es funcional pero básica. Está diseñada para tomar decisiones basadas en la fuerza de su mano, pero puede no siempre elegir la jugada más óptima desde una perspectiva estratégica avanzada.
 - El juego está diseñado para terminales de texto. La visualización puede variar ligeramente dependiendo de la configuración de la consola utilizada.
+- Problemas con el current, al pasar a un jugador como puntero se pierde el curren de la lista, por lo que para solucionarlo se debe recorrer la lista nuevamente. (posible problemas con los turnos)
+- Al repartir el bote no se hace un side-pot, acorde a las reglas del poker Texas Hold'em

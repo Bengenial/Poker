@@ -24,8 +24,6 @@ Jugador *crearJugador(char *nombre, int esBot){
 	jugador->apuesta = 0;
 	jugador->esBot = esBot;
 	jugador->hizoRiseCall = 0;
-	jugador->allIn[0] = 0;
-	jugador->allIn[1] = 0;
 	return jugador;
 }
 
@@ -142,8 +140,6 @@ void checkOrCall(Jugador *jugadorActual, int apuestaActual, Partida *partida, in
 		printf("%s va ", jugadorActual->nombre);
 		arcoiris("all-in");
 		puts("");
-        jugadorActual->allIn[0] = 1;
-        jugadorActual->allIn[1] = jugadorActual->apuesta;
 	}
 
 	jugadorActual->yaActuo = 1;
@@ -217,8 +213,6 @@ void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPen
 		printf("%s va ",actual->nombre);
 		arcoiris("all-in");
 		puts("");
-		actual->allIn[0] = 1;//se marca que se fue allin
-		actual->allIn[1] = actual->apuesta;
 
 	}
 
@@ -233,6 +227,7 @@ void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPen
 	} while (jug != inicio2);
 	actual->yaActuo = 1;
 	(*jugadoresPendientes) = contarJugadoresPendientes(partida->jugadores, actual);
+	
 	inicio = actual;
 	//presioneTeclaParaContinuar();
 }
