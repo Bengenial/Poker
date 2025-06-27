@@ -21,7 +21,7 @@ void moverIzquierdaBoton(Partida *partida); //Mueve el botón del dealer a la iz
 
 void definirGanador(Partida *partida);  //Determina el ganador de la partida al final de una ronda, evaluando las manos de los jugadores activos
 
-static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax);    //Lógica para que un Bot tome decisiones basadas en su mano y la apuesta actual
+Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax);    //Lógica para que un Bot tome decisiones basadas en su mano y la apuesta actual
 
 void limpiarManos(Partida *partida);    //Limpia las manos de los jugadores al inicio de una nueva ronda, reiniciando sus estados y apuestas
 

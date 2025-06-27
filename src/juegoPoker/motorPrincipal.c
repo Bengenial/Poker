@@ -134,9 +134,9 @@ void moverIzquierdaBoton(Partida *partida){
 
 void definirGanador(Partida *partida){
 	printf("\n=== SHOWDOWN ===\n");
-	Sleep(300);
+	Sleep(1000);
 	mostrarMesa(partida);
-	Sleep(300);
+	Sleep(1000);
 	printf("\n");
 	
 	JugadorEvaluado jugadoresEvaluados[10];
@@ -379,7 +379,7 @@ void limpiarManos(Partida *partida){
 	} while(jug != inicio);
 }
 
-static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax) // las decisiones de un bot
+Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax) // las decisiones de un bot
 {
 	int apuestaActual = jugadorActual->apuesta;
     ManoEvaluada manoEvaluada;
@@ -647,7 +647,7 @@ void rondaDeApuestas(Partida *partida){
 
 		if (strcmp(actual->estado, "Jugando") == 0 && actual->fichas > 0) {
 
-			int opcion, cantidad = 0;
+			int cantidad = 0;
 
 			mostrarMesa(partida);
 
@@ -837,15 +837,15 @@ void iniciarPartida(){
 	//arrglar repartiR BOTE, fakin bots se llevan todo
 	//antes iniciarRonda(partida,IArand);
 	do{	
-		if (contarJugadoresActivos(partida.jugadores, clist_first(partida.jugadores)) == 1) break;
+		
 		Jugador *jug = partida.siguienteApuesta;
     	Jugador *inicio = jug;
-		//1.-En cada ronda aumentar las ciegas (menor y mayor) 
-		//2.-Si el jugador, mostrar directamente el ganador
 
-		printf("=============\nRonda numero : %d\n=============\n\n", partida.ronda);
+		if (contarJugadoresActivos(partida.jugadores, jug) == 1) break;
+
+		printf("===================\nRonda numero : %d\n===================\n\n", partida.ronda);
 		do {
-			printf("JUGADOR = %s es ", jug->nombre);
+			printf("%s es ", jug->nombre);
 			if(jug == partida.jugadorBoton) printf("BOTON\n");
 			else if (jug == partida.jugadorCiegaMayor) printf("CIEGA MAYOR\n");
 			else if (jug == partida.jugadorCiegaMenor) printf("CIEGA MENOR\n");
@@ -854,7 +854,7 @@ void iniciarPartida(){
 
 			jug = clist_next(partida.jugadores);
 		} while (jug != inicio);
-
+        printf("\n");
 		//Inicia la ronda omg
 		iniciarRonda(&partida);
 		boton = clist_next(partida.jugadores); // Botón

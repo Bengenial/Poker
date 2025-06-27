@@ -25,7 +25,6 @@ int main(){
 	limpiarPantalla();
 
 	//intro(300));
-	int IArand;
 
 	char opcion;
 	do{

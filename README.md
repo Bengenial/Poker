@@ -48,56 +48,21 @@ Puedes compilar y ejecutar el proyecto de tres maneras diferentes:
 
 #### 🔹 Método 1: Script `build.bat` (Para Windows)
 
-1. Crea un archivo llamado `build.bat` en la raíz del proyecto.
-2. Copia y pega el siguiente contenido:
-
-```bat
-@echo off
-echo Compilando el proyecto...
-if not exist build mkdir build
-gcc src\poker.c src\juegoPoker\*.c src\tdas\*.c -o build\poker.exe
-echo Compilacion finalizada.
-pause
-```
-
-3. Ejecuta el script haciendo doble clic en él o escribiendo `build.bat` en la consola.  
+- Ejecuta el script haciendo doble clic en él o escribiendo `build.bat` en la consola.  
 El ejecutable `poker.exe` se creará en la carpeta `build`.
+```bash
+.\build.bat
+```
 
 ---
 
 #### 🔹 Método 2: Makefile (Recomendado para cualquier SO)
 
-Asegúrate de tener un archivo `Makefile` en la raíz del proyecto con el siguiente contenido:
-
-```makefile
-CC = gcc
-CFLAGS = -Wall -Wextra -std=c99
-SRCS = src/poker.c src/juegoPoker/*.c src/tdas/*.c
-TARGET_DIR = build
-TARGET = $(TARGET_DIR)/poker
-
-all: $(TARGET)
-
-$(TARGET): $(SRCS)
-	@mkdir -p $(TARGET_DIR)
-	$(CC) $(CFLAGS) $^ -o $@
-
-run: all
-	./$(TARGET)
-
-clean:
-	rm -rf $(TARGET_DIR)
-
-.PHONY: all run clean
-```
-
-En la terminal:
+Asegúrate de tener un archivo `Makefile` en la raíz del proyecto
 
 - `make` o `make all`: compila el proyecto.
 - `make run`: compila (si es necesario) y ejecuta el juego.
 - `make clean`: elimina la carpeta `build` y el ejecutable.
-
----
 
 #### 🔹 Método 3: Comando Directo en Consola
 

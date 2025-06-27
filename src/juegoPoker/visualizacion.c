@@ -16,9 +16,9 @@ void arcoiris(char *texto){
     int colores[] = {31, 33, 32, 36, 34, 35}; // rojo, amarillo, verde, cyan, azul, magenta
     int num_colores = sizeof(colores) / sizeof(colores[0]);
 
-    for (int i = 0; i < strlen(texto); i++) {
+    for (int i = 0; i < (int) strlen(texto); i++) {
         int color = colores[i % num_colores];
-        printf("\033[1;%dm%c", color, texto[i]); // 1;XXm activa color brillante
+        printf("\033[1;%dm%c", color, texto[i]); 
     }
 
     printf("\033[0m"); // Reset al final
@@ -78,17 +78,23 @@ void mostrarMesa(Partida *partida)
 {	
 	printf("MESA ACTUAL:\n");
 	printf("BOTE: %d\n\n", partida->mesa.bote);
+	printf("--------------------------------------------------\n");
+	if(partida->mesa.total == 0){
+	printf("\033[5;92mPRE-FLOP\033[0m\n");
+	printf("CIEGA MAYOR: %d\n", partida->mesa.ciegaMayor);
+	} 
+
 
 	switch (partida->mesa.total)
 	{
 	case 3:
-		printf("FLOP\n");
+		printf("\033[5;93mFLOP\n\033[0m");
 		break;
 	case 4:
-		printf("TURN\n");
+		printf("\033[5;38;5;208mTURN\033[0m\n");
 		break;
 	case 5:
-		printf("RIVER\n");
+		printf("\033[5;91mRIVER\033[0m\n");
 		break;
 	}
 	

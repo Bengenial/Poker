@@ -1,29 +1,19 @@
-# Carpetas
-SRC_DIR = src
-BUILD_DIR = build
-INCLUDE_DIR = include
-LIB_DIR = lib
+CC = gcc
+CFLAGS = -Wall -Wextra -std=c99
+SRCS = src/poker.c src/juegoPoker/*.c src/tdas/*.c
+TARGET_DIR = build
+TARGET = $(TARGET_DIR)/poker
 
-# Flags
-CFLAGS = -I$(INCLUDE_DIR) -Wno-unused-result
-LDFLAGS = -L$(LIB_DIR) -lraylib -lopengl32 -lgdi32 -lwinmm
+all: $(TARGET)
 
-# Archivos fuente
-SRC_FILES = src/poker.c \
-            $(wildcard $(SRC_DIR)/tdasPoker/*.c) \
-            $(wildcard $(SRC_DIR)/tdas/*.c)
+$(TARGET): $(SRCS)
+	@mkdir -p $(TARGET_DIR)
+	$(CC) $(CFLAGS) $^ -o $@
 
-# Nombre del ejecutable
-OUT = $(BUILD_DIR)/poker.exe
-
-# Regla por defecto
-all:
-	$(CC) $(SRC_FILES) -o $(OUT) $(CFLAGS) $(LDFLAGS)
-
-# Ejecutar el juego
 run: all
-	./$(OUT)
+	./$(TARGET)
 
-# Limpiar ejecutable
 clean:
-	del /Q $(BUILD_DIR)\*.exe
+	rm -rf $(TARGET_DIR)
+
+.PHONY: all run clean
