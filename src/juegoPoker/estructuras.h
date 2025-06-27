@@ -47,12 +47,15 @@ typedef struct {        //representa un jugador en el juego
 typedef struct {        //representa un jugador evaluado con su mano y puntuación
     Jugador *jugador;
     ManoEvaluada mano;
+    int apuestaRestante; //para llevar en cuenta dinero a repartir???
 } JugadorEvaluado;
 
 typedef struct {        //representa la mesa de juego
     Carta cartas[5];
     int total;
     int bote;
+    int ciegaMayor;
+    int ciegaMenor;
 } Mesa;
 
 typedef struct {        //representa una partida de poker

@@ -95,7 +95,7 @@ void checkOrCall(Jugador *jugadorActual, int apuestaActual, Partida *partida, in
 
 	if(paraIgualar == 0)
 	{
-		printf("%s pasa.\n", jugadorActual->nombre);
+		printf("%s \033[1;92mpasa\033[0m\n", jugadorActual->nombre);
 		jugadorActual->yaActuo = 1;
 		(*jugadoresPendientes)--;
 		return;
@@ -117,11 +117,13 @@ void checkOrCall(Jugador *jugadorActual, int apuestaActual, Partida *partida, in
     jugadorActual->apuesta += cantidadApostar;
     partida->mesa.bote += cantidadApostar;
 
-	printf("%s iguala la apuesta.\n", jugadorActual->nombre);
+	printf("%s \033[1;93miguala la apuesta\033[0m\n", jugadorActual->nombre);
 
 	if(jugadorActual->fichas == 0) //si quedo pobre
 	{
-		printf("%s va all-in :OOO\n", jugadorActual->nombre);
+		printf("%s va ", jugadorActual->nombre);
+		arcoiris("all-in");
+		puts("");
         jugadorActual->allIn[0] = 1;
         jugadorActual->allIn[1] = jugadorActual->apuesta;
 	}
@@ -129,6 +131,8 @@ void checkOrCall(Jugador *jugadorActual, int apuestaActual, Partida *partida, in
 	jugadorActual->yaActuo = 1;
 	jugadorActual->hizoRiseCall = 1;
 	(*jugadoresPendientes)--;
+
+	//presioneTeclaParaContinuar();
 
 	/*if (jugadorActual->apuesta == apuestaActual) {
 		printf("%s pasa.\n", jugadorActual->nombre);
@@ -165,6 +169,7 @@ void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPen
 		do{
 			printf("¿Cuánto quieres subir? (mínimo %d): ", minimoApuesta);
 			scanf("%d", cantidad);
+			getchar();
 			
 			if((*cantidad) < minimoApuesta && (*cantidad) < actual->fichas)
 				printf("El Raise que hiciste es más bajo que el minimo u_u, \nIntentalo nuevamente :D\n");
@@ -187,11 +192,13 @@ void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPen
 	actual->hizoRiseCall = 1;
 
 
-	printf("%s sube la apuesta a %d.\n", actual->nombre, actual->apuesta);
+	printf("%s \033[1;96msube la apuesta\033[0m a %d.\n", actual->nombre, actual->apuesta);
 	//nuevo de allin
 	if(actual->fichas == 0)
 	{
-		printf("%s va all-in :OOO\n", actual->nombre);
+		printf("%s va ",actual->nombre);
+		arcoiris("all-in");
+		puts("");
 		actual->allIn[0] = 1;//se marca que se fue allin
 		actual->allIn[1] = actual->apuesta;
 
@@ -209,7 +216,7 @@ void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPen
 	actual->yaActuo = 1;
 	(*jugadoresPendientes) = contarJugadoresPendientes(partida->jugadores, actual);
 	inicio = actual;
-	presioneTeclaParaContinuar();
+	//presioneTeclaParaContinuar();
 }
 
 void fold(Jugador *actual, int *jugadoresPendientes, Partida *partida, int *salir){
@@ -234,5 +241,5 @@ void fold(Jugador *actual, int *jugadoresPendientes, Partida *partida, int *sali
 		(*salir) = 0;
 		(*jugadoresPendientes) = 0; //no crear un bucle infinito
 	}
-	presioneTeclaParaContinuar();
+	//presioneTeclaParaContinuar();
 }

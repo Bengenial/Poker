@@ -31,50 +31,50 @@ void funcionTrampa(Partida *partida){ //funciona para 3 jugadores
 	Carta carta;
 	//1 JUG
 	strcpy(carta.valor,"A");
-	strcpy(carta.color,"diamantes");
+	strcpy(carta.color,"tréboles");
 	partida->baraja.cartas[0] = carta;
 
-	strcpy(carta.valor,"K");
-	strcpy(carta.color,"corazones");
+	strcpy(carta.valor,"3");
+	strcpy(carta.color,"tréboles");
 	partida->baraja.cartas[1] = carta;
 
 	//2 JUG
-	strcpy(carta.valor,"9");
-	strcpy(carta.color,"corazones");
+	strcpy(carta.valor,"A");
+	strcpy(carta.color,"tréboles");
 	partida->baraja.cartas[2] = carta;
 
-	strcpy(carta.valor,"8");
-	strcpy(carta.color,"corazones");
+	strcpy(carta.valor,"3");
+	strcpy(carta.color,"tréboles");
 	partida->baraja.cartas[3] = carta;
 
 	//3 JUG
-	strcpy(carta.valor,"4");
-	strcpy(carta.color,"corazones");
+	strcpy(carta.valor,"2");
+	strcpy(carta.color,"tréboles");
 	partida->baraja.cartas[4] = carta;
 
-	strcpy(carta.valor,"K");
-	strcpy(carta.color,"picas");
+	strcpy(carta.valor,"3");
+	strcpy(carta.color,"tréboles");
 	partida->baraja.cartas[5] = carta;
 
 	//MESA
-	strcpy(carta.valor,"J");
+	strcpy(carta.valor,"10");
 	strcpy(carta.color,"corazones");
 	partida->baraja.cartas[6] = carta;
 
-	strcpy(carta.valor,"10");
+	strcpy(carta.valor,"7");
 	strcpy(carta.color,"corazones");
 	partida->baraja.cartas[7] = carta;
 
-	strcpy(carta.valor,"Q");
+	strcpy(carta.valor,"J");
 	strcpy(carta.color,"corazones");
 	partida->baraja.cartas[8] = carta;
 
-	strcpy(carta.valor,"7");
+	strcpy(carta.valor,"K");
 	strcpy(carta.color,"tréboles");
 	partida->baraja.cartas[9] = carta;
 
-	strcpy(carta.valor,"2");
-	strcpy(carta.color,"picas");
+	strcpy(carta.valor,"8");
+	strcpy(carta.color,"corazones");
 	partida->baraja.cartas[10] = carta;
 }
 
@@ -128,6 +128,10 @@ void moverIzquierdaBoton(Partida *partida){
 
 }
 
+/*void repartirBote(){
+	
+}*/
+
 void definirGanador(Partida *partida){
 	printf("\n=== SHOWDOWN ===\n");
 	Sleep(300);
@@ -147,6 +151,7 @@ void definirGanador(Partida *partida){
             combinarCartasJugador(jug->mano, partida->mesa, cartasCombinadas);
             jugadoresEvaluados[numJugadoresActivos].jugador = jug;
             jugadoresEvaluados[numJugadoresActivos].mano = evaluarMano(cartasCombinadas, 7);
+			jugadoresEvaluados[numJugadoresActivos].apuestaRestante = jug->apuesta;//nuevo para el bote
             mostrarCartasJugador(jug);
             printf("- ");
             mostrarTipoMano(jugadoresEvaluados[numJugadoresActivos].mano.tipo);
@@ -159,6 +164,146 @@ void definirGanador(Partida *partida){
         printf("Error: No hay jugadores activos\n");
         return;
     }
+	
+	//vamos a probar esto (perdon benjoid xd)
+	/*
+	int boteNum = 1; //inicializamos el primer bote, puede haber más de 1
+	while (1){ //se ejecuta hasta que se cumpla alguna de estas condiciones
+
+		//ponemos 999999 que es un numero exagerado por si acaso en un futuro supera las 1000 fichas por partida
+		int apuestaMinimaDelBote = 999999;//ya que sirve para buscar el más chico
+        for (int i = 0; i < numJugadoresActivos; i++) {
+            if (jugadoresEvaluados[i].apuestaRestante > 0 && jugadoresEvaluados[i].apuestaRestante < apuestaMinimaDelBote) {
+                apuestaMinimaDelBote = jugadoresEvaluados[i].apuestaRestante;
+            }
+        }
+
+        // Si no encontramos apuestas restantes, ya repartimos todo el dinero.
+        if (apuestaMinimaDelBote == 999999) {
+            break; // y salimos 
+        }
+
+        // Si no, creamos el bote y definimos los jugadores elegibles
+        int boteActual = 0;
+        JugadorEvaluado* jugadoresElegibles[10];
+        int numJugadoresElegibles = 0;
+
+        for (int i = 0; i < numJugadoresActivos; i++) {
+			//Si todavia tiene money, es posible canditato
+            if (jugadoresEvaluados[i].jugador->apuesta > (jugadoresEvaluados[i].jugador->apuesta - jugadoresEvaluados[i].apuestaRestante) ) {
+                jugadoresElegibles[numJugadoresElegibles] = &jugadoresEvaluados[i];
+                numJugadoresElegibles++;
+            }
+        }
+        
+        //Luego recolectamos el dinero de las apuestas de los jugadores para este bote 
+        for (int i = 0; i < numJugadoresActivos; i++){
+            if(jugadoresEvaluados[i].apuestaRestante > 0){
+                int contribucion = (jugadoresEvaluados[i].apuestaRestante < apuestaMinimaDelBote) ? jugadoresEvaluados[i].apuestaRestante : apuestaMinimaDelBote;
+                boteActual += contribucion;
+                jugadoresEvaluados[i].apuestaRestante -= contribucion;
+            }
+        }
+        
+		//ver si implemento esto, es para un posible error
+		if(numJugadoresElegibles == 0)
+		{
+			continue; //no lo temrino de entender, pero es como pa un caso super específico
+		}
+
+        //Y encontramos al ganador/es SOLO entre los elegibles para ESTE bote (potente)
+        ManoEvaluada mejorManoDelBote = jugadoresElegibles[0]->mano;
+        for (int i = 1; i < numJugadoresElegibles; i++) {
+            if (jugadoresElegibles[i]->mano.puntuacion > mejorManoDelBote.puntuacion) {
+                mejorManoDelBote = jugadoresElegibles[i]->mano;
+            }
+        }
+
+        // Ya al final repartimos el dinero del bote actual a los ganadores
+        Jugador* ganadoresFinales[10];
+        int numGanadoresFinales = 0;
+        for (int i = 0; i < numJugadoresElegibles; i++) {
+            if (jugadoresElegibles[i]->mano.puntuacion == mejorManoDelBote.puntuacion) {
+                ganadoresFinales[numGanadoresFinales] = jugadoresElegibles[i]->jugador;
+                numGanadoresFinales++;
+            }
+        }
+        
+		//Aquí imprimimos de acorde si fue el primer o segundo bote
+        if (boteNum == 1) printf("\n=== Bote Principal de %d fichas ===\n", boteActual);
+        else printf("\n=== Bote Secundario #%d de %d fichas ===\n", boteNum - 1, boteActual);
+
+        int fichasPorGanador = boteActual / numGanadoresFinales;
+        int resto = boteActual % numGanadoresFinales;
+
+        for (int i = 0; i < numGanadoresFinales; i++) {
+            int fichasARecibir = fichasPorGanador;
+            if (i == 0) fichasARecibir += resto;
+
+            printf(" - %s gana %d fichas con ", ganadoresFinales[i]->nombre, fichasARecibir);
+            mostrarTipoMano(mejorManoDelBote.tipo);
+            printf("\n");
+            ganadoresFinales[i]->fichas += fichasARecibir;
+        }
+
+        boteNum++;
+    } // Y ya estarían los botes repartidos (supuestamente)
+
+	printf("\n===RESULTADO===\n");
+	// Encontrar la mejor puntuación
+     int mejorPuntuacion = 0;
+    for (int i = 0; i < numJugadoresActivos; i++) {
+        if (jugadoresEvaluados[i].mano.puntuacion > mejorPuntuacion) {
+            mejorPuntuacion = jugadoresEvaluados[i].mano.puntuacion;
+        }
+    }
+
+    // Encontrar a todos los jugadores con esa puntuación 
+    Jugador *ganadores[10];
+    int numGanadores = 0;
+    for (int i = 0; i < numJugadoresActivos; i++) {
+        if (jugadoresEvaluados[i].mano.puntuacion == mejorPuntuacion) {
+            ganadores[numGanadores] = jugadoresEvaluados[i].jugador;
+            numGanadores++;
+        }
+    }
+
+    // Imprimir el resumen SIN repartir dinero (porque ya se hizo)
+    if (numGanadores == 1) {
+        printf("La mejor mano la tuvo: %s\n", ganadores[0]->nombre);
+        
+        // Buscamos y mostramos el tipo de mano que tuvo
+        for (int i = 0; i < numJugadoresActivos; i++) {
+            if (jugadoresEvaluados[i].jugador == ganadores[0]) {
+                printf("Con: ");
+                mostrarTipoMano(jugadoresEvaluados[i].mano.tipo);
+                printf("\n");
+                break;
+            }
+        }
+    } else {
+        printf("Hubo un empate por la mejor mano entre %d jugadores:\n", numGanadores);
+        for (int i = 0; i < numGanadores; i++) {
+            printf(" - %s\n", ganadores[i]->nombre);
+        }
+    }
+
+
+    partida->mesa.bote = 0; // Reiniciar el bote para la siguiente ronda
+
+    // Bucle final para mostrar las fichas actualizadas de todos los jugadores
+    printf("\nFichas después de la mano:\n");
+    jug = clist_first(partida->jugadores);
+    inicio = jug;
+    do {
+        printf("%s: %d fichas\n", jug->nombre, jug->fichas);
+        jug = clist_next(partida->jugadores);
+    } while (jug != inicio);*/
+	
+
+
+
+	//bruno
 	int mejorPuntuacion = jugadoresEvaluados[0].mano.puntuacion;
 	for (int i = 1; i < numJugadoresActivos; i++) {
         if (jugadoresEvaluados[i].mano.puntuacion > mejorPuntuacion) {
@@ -206,9 +351,12 @@ void definirGanador(Partida *partida){
     jug = clist_first(partida->jugadores);
     inicio = jug;
     do {
-        printf("%s: %d fichas\n", jug->nombre, jug->fichas);
+        printf("%s: %d fichas", jug->nombre, jug->fichas);
+		if(jug->fichas == 0) printf("\033[5;91m BUSTED\033[0m");
+		puts("");
         jug = clist_next(partida->jugadores);
-    } while (jug != inicio);
+    } while (jug != inicio); ///
+
 }
 
 void limpiarManos(Partida *partida){
@@ -232,9 +380,10 @@ void limpiarManos(Partida *partida){
 }
 
 static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax) // las decisiones de un bot
-{	
-    int apuestaActual = jugadorActual->apuesta;
+{
+	int apuestaActual = jugadorActual->apuesta;
     ManoEvaluada manoEvaluada;
+    Accion accionDeseada; // Aquí guardaremos la acción ideal del bot
 
 	/* //? para debuguear, por si quieres que todos los bots te siguan el call
 	if (apuestaActual < apuestaMax) 
@@ -246,7 +395,78 @@ static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apue
 	/* //? para debuguear, por si quieres que todos los bots se retiren
 	return ACCION_FOLD;
 	*/
+
+
+    // === PASO 1: LÓGICA DE DECISIÓN UNIFICADA ===
+    // El bot decide qué quiere hacer basándose en sus cartas.
+
+    if (partida->mesa.total == 0) { // --- LÓGICA PRE-FLOP ---
+        Carta *c1 = list_first(jugadorActual->mano);
+        Carta *c2 = list_next(jugadorActual->mano);
+        int val1 = obtenerValorCarta(c1->valor);
+        int val2 = obtenerValorCarta(c2->valor);
+
+        // Nivel 1: Manos Premium -> Desea hacer RAISE
+        if ((val1 == val2 && val1 >= 11) || (val1 >= 13 && val2 >= 12 && strcmp(c1->color, c2->color) == 0)) {
+            accionDeseada = ACCION_RAISE;
+        }
+        // Nivel 2: Manos Buenas -> Desea hacer CALL o CHECK
+        else if ((val1 == val2 && val1 >= 7) || (val1 >= 10 && val2 >= 9 && strcmp(c1->color, c2->color) == 0)) {
+            accionDeseada = (apuestaActual < apuestaMax) ? ACCION_CALL : ACCION_CHECK;
+        }
+        // Nivel 3: Manos Especulativas -> Depende del costo
+        else {
+            if (apuestaActual < apuestaMax) { // Si hay apuesta
+                // Esta es tu lógica corregida, ¡y es correcta!
+                if (apuestaMax <= partida->mesa.ciegaMayor) {
+                    accionDeseada = ACCION_CALL; // Paga si solo es la ciega
+                } else {
+                    accionDeseada = ACCION_FOLD; // Se retira si es una subida real
+                }
+            } else {
+                accionDeseada = ACCION_CHECK; // Si no hay apuesta, pasa
+            }
+        }
+    }
+    else { // --- LÓGICA POST-FLOP ---
+        Carta cartasCombinadas[7];
+        combinarCartasJugador(jugadorActual->mano, partida->mesa, cartasCombinadas);
+        manoEvaluada = evaluarMano(cartasCombinadas, 2 + partida->mesa.total);
+
+        if (apuestaActual < apuestaMax) { // Si alguien ya subió
+            int diferencia = apuestaMax - apuestaActual;
+            if (manoEvaluada.puntuacion >= 3000000) accionDeseada = ACCION_RAISE; // Trío o mejor: quiere re-subir
+            else if (manoEvaluada.puntuacion >= 1000000) {
+                accionDeseada = (diferencia <= 50) ? ACCION_CALL : ACCION_FOLD; // Paga si no es caro
+            } else {
+                accionDeseada = ACCION_FOLD; // No tiene nada: se retira
+            }
+        } else { // Si nadie ha subido
+            if (manoEvaluada.puntuacion >= 2000000) accionDeseada = ACCION_RAISE; // Dos Pares o mejor: quiere apostar
+            else accionDeseada = ACCION_CHECK; // Menos que eso: pasa
+        }
+    }
+
+    // === PASO 2: APLICAR RESTRICCIONES ===
+    // Ahora que sabemos lo que el bot QUIERE hacer, vemos si PUEDE hacerlo.
+
+    // Si el bot quiere subir, pero ya no puede hacerlo...
+    if (accionDeseada == ACCION_RAISE && (jugadorActual->hizoRiseCall || jugadorActual->fichas <= apuestaMax - apuestaActual)) {
+        // Se "degrada" su acción. En lugar de subir, igualará la apuesta si es necesario.
+        if (apuestaActual < apuestaMax) {
+            return ACCION_CALL;
+        } else {
+            return ACCION_CHECK;
+        }
+    }
+    
+    // Si no se aplicó ninguna restricción, el bot realiza la acción que deseaba.
+    return accionDeseada;
+}
 	
+
+/*
+	///cosa base
     // --- LÓGICA PRE-FLOP (cuando no hay cartas en la mesa) ---
     if (partida->mesa.total == 0) {
         Carta *c1 = list_first(jugadorActual->mano);
@@ -294,7 +514,7 @@ static Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apue
             else return ACCION_CHECK; // Peor que eso: pasa
         }
     }
-}
+}*/
 
 void logicaJugador(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPendientes, int *salir, Jugador *inicio, int *cantidad, Jugador *jug) {
     int opcion;
@@ -304,10 +524,9 @@ void logicaJugador(Jugador *actual, int *apuestaMax, Partida *partida, int *juga
         printf("[1] Call | [2] Fold\n");
         do {
             printf("Elige una opción: ");
-            if (scanf("%d", &opcion) != 1) {
-                while (getchar() != '\n');
-                opcion = 0;
-            }
+            scanf("%d", &opcion);
+			getchar();
+			
         } while (opcion < 1 || opcion > 2);
 
         switch (opcion) {
@@ -326,10 +545,8 @@ void logicaJugador(Jugador *actual, int *apuestaMax, Partida *partida, int *juga
         }
         do {
             printf("Elige una opción: ");
-            if (scanf("%d", &opcion) != 1) {
-                while (getchar() != '\n');
-                opcion = 0;
-            }
+            scanf("%d", &opcion);
+			getchar();
         } while (opcion < 1 || opcion > 3);
 
         switch (opcion) {
@@ -453,7 +670,7 @@ void rondaDeApuestas(Partida *partida){
 		do {
 			actual = clist_next(partida->jugadores);
 		} while ((strcmp(actual->estado, "Retirado") == 0 ||actual->fichas == 0 || actual->yaActuo) && actual != inicio);
-
+		presioneTeclaParaContinuar();
 		limpiarPantalla();
 
 	}
@@ -471,39 +688,39 @@ void rondaDeApuestas(Partida *partida){
 }
 
 void iniciarRonda(Partida *partida){
-	int ciegaMayor = 8 + 2*(partida->ronda);
-	int ciegaMenor = ciegaMayor/2;
+	partida->mesa.ciegaMayor = 8 + 2*(partida->ronda);
+	partida->mesa.ciegaMenor = partida->mesa.ciegaMayor/2;
 	partida->mesa.bote = 0;
 	
 	//Ciega Mayor
-	if (partida->jugadorCiegaMayor && partida->jugadorCiegaMayor->fichas >= ciegaMayor){
-        partida->jugadorCiegaMayor->fichas -= ciegaMayor;
-		partida->jugadorCiegaMayor->apuesta = ciegaMayor;
+	if (partida->jugadorCiegaMayor && partida->jugadorCiegaMayor->fichas >= partida->mesa.ciegaMayor){
+        partida->jugadorCiegaMayor->fichas -= partida->mesa.ciegaMayor;
+		partida->jugadorCiegaMayor->apuesta = partida->mesa.ciegaMayor;
 	}
 	else if (partida->jugadorCiegaMayor){
-		ciegaMayor = partida->jugadorCiegaMayor->fichas;
-		partida->jugadorCiegaMayor->apuesta = ciegaMayor;
+		partida->mesa.ciegaMayor = partida->jugadorCiegaMayor->fichas;
+		partida->jugadorCiegaMayor->apuesta = partida->mesa.ciegaMayor;
 		partida->jugadorCiegaMayor = 0;
 	}
 
 	//CIega Menor
-    if (partida->jugadorCiegaMenor && partida->jugadorCiegaMenor->fichas >= ciegaMenor){
-        partida->jugadorCiegaMenor->fichas -= ciegaMenor;
-		partida->jugadorCiegaMenor->apuesta = ciegaMenor;
+    if (partida->jugadorCiegaMenor && partida->jugadorCiegaMenor->fichas >= partida->mesa.ciegaMenor){
+        partida->jugadorCiegaMenor->fichas -= partida->mesa.ciegaMenor;
+		partida->jugadorCiegaMenor->apuesta = partida->mesa.ciegaMenor;
 	}
 	else if (partida->jugadorCiegaMenor){
-		ciegaMenor = partida->jugadorCiegaMenor->fichas;
+		partida->mesa.ciegaMenor = partida->jugadorCiegaMenor->fichas;
 		partida->jugadorCiegaMenor->fichas = 0;
-		partida->jugadorCiegaMenor->apuesta = ciegaMenor;
+		partida->jugadorCiegaMenor->apuesta = partida->mesa.ciegaMenor;
 	}
 
 	//Aumentar el bote
-	partida->mesa.bote += ciegaMayor + ciegaMenor;
+	partida->mesa.bote += partida->mesa.ciegaMayor + partida->mesa.ciegaMenor;
 	partida->mesa.total = 0;
 	
 	barajarCartas(&partida->baraja); // Barajar cartas
 
-	//? Por si quieres un juego personalizado para 3 jugadores (revisar la fucnión funcionTrampa)
+	//? Por si quieres un juego personalizado para 3 jugadores (revisar la función funcionTrampa)
 	//funcionTrampa(partida);
 
 
@@ -617,7 +834,7 @@ void iniciarPartida(){
 	partida.baraja = baraja;
 	partida.ronda = 1;
 	
-
+	//arrglar repartiR BOTE, fakin bots se llevan todo
 	//antes iniciarRonda(partida,IArand);
 	do{	
 		if (contarJugadoresActivos(partida.jugadores, clist_first(partida.jugadores)) == 1) break;
@@ -626,7 +843,7 @@ void iniciarPartida(){
 		//1.-En cada ronda aumentar las ciegas (menor y mayor) 
 		//2.-Si el jugador, mostrar directamente el ganador
 
-		printf("\n\n=============\nRonda numero : %d\n=============\n\n", partida.ronda);
+		printf("=============\nRonda numero : %d\n=============\n\n", partida.ronda);
 		do {
 			printf("JUGADOR = %s es ", jug->nombre);
 			if(jug == partida.jugadorBoton) printf("BOTON\n");
