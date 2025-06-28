@@ -38,7 +38,9 @@ El flujo de una partida completa sigue las reglas estándar de Texas Hold'em:
 
 ## 🛠️ Cómo Compilar y Ejecutar
 
-Asegúrate de tener un compilador de C (como GCC) y, opcionalmente, la utilidad `make`.
+1. Descargar el proyecto completo.
+2. Descomprimir el contenido en una carpeta local.
+3. Asegúrate de tener un compilador de C (como GCC) y, opcionalmente, la utilidad `make`.
 
 ### Requisitos
 
