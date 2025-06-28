@@ -37,7 +37,7 @@ void iniciarRonda(Partida *partida);    //Inicia una ronda de juego, gestionando
 
 void buscarGanador(Partida *partida);   //Busca al ganador de la partida al final de una ronda, evaluando las manos de los jugadores activos y mostrando el resultado
 
-void liberarMemoria(Partida *partida);
+void liberarMemoria(Partida *partida);  //Libera la memoria utilizada por la partida, incluyendo los jugadores, la baraja y las cartas en la mesa
 
 void iniciarPartida();  //Inicia una partida de poker, configurando los jugadores, la baraja y el estado inicial del juego
 

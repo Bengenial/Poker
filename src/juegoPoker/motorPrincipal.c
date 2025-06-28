@@ -258,21 +258,21 @@ Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax)
 
     // El bot decide qué quiere hacer basándose en sus cartas.
 
-    if (partida->mesa.total == 0) { // --- LÓGICA PRE-FLOP ---
+    if (partida->mesa.total == 0) { //LÓGICA PRE-FLOP 
         Carta *c1 = list_first(jugadorActual->mano);
         Carta *c2 = list_next(jugadorActual->mano);
         int val1 = obtenerValorCarta(c1->valor);
         int val2 = obtenerValorCarta(c2->valor);
 
-        // Nivel 1: Manos Premium -> Desea hacer RAISE
+        // Nivel 1: Manos Premium 
         if ((val1 == val2 && val1 >= 11) || (val1 >= 13 && val2 >= 12 && strcmp(c1->color, c2->color) == 0)) {
             accionDeseada = ACCION_RAISE;
         }
-        // Nivel 2: Manos Buenas -> Desea hacer CALL o CHECK
+        // Nivel 2: Manos Buenas 
         else if ((val1 == val2 && val1 >= 7) || (val1 >= 10 && val2 >= 9 && strcmp(c1->color, c2->color) == 0)) {
             accionDeseada = (apuestaActual < apuestaMax) ? ACCION_CALL : ACCION_CHECK;
         }
-        // Nivel 3: Manos Especulativas -> Depende del costo
+        // Nivel 3: Manos Especulativas 
         else {
             if (apuestaActual < apuestaMax) { // Si hay apuesta
                 // Esta es tu lógica corregida, ¡y es correcta!
@@ -286,7 +286,7 @@ Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax)
             }
         }
     }
-    else { // --- LÓGICA POST-FLOP ---
+    else { // LÓGICA POST-FLOP 
         Carta cartasCombinadas[7];
         combinarCartasJugador(jugadorActual->mano, partida->mesa, cartasCombinadas);
         manoEvaluada = evaluarMano(cartasCombinadas, 2 + partida->mesa.total);
@@ -305,7 +305,7 @@ Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax)
         }
     }
 
-    // === PASO 2: APLICAR RESTRICCIONES ===
+    // APLICAR RESTRICCIONES 
     // Ahora que sabemos lo que el bot QUIERE hacer, vemos si PUEDE hacerlo.
 
     // Si el bot quiere subir, pero ya no puede hacerlo...
@@ -407,7 +407,7 @@ void logicaBot(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadore
             break;
     }
 
-    //Sleep(1000); // Simula que el bot "piensa"
+    Sleep(1000); // Simula que el bot "piensa"
 
 
     Accion accionBot = tomarDecisiones(partida, actual, *apuestaMax);
