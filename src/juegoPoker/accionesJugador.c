@@ -39,7 +39,7 @@ void eliminarJugadores(CList *jugadores)
 		jug = clist_next(jugadores);
 	} while ( jug != inicio );
 }
-int jugadoresJugando(CList *jugadores, Jugador *actual) {
+int jugadoresJugando(CList *jugadores, Jugador *actual) { //es llamada por si todos hacen fold
 	int n = 0;
 	Jugador *jug = clist_first(jugadores);
 	if (!jug) return 0;
@@ -146,34 +146,6 @@ void checkOrCall(Jugador *jugadorActual, int apuestaActual, Partida *partida, in
 	jugadorActual->hizoRiseCall = 1;
 	(*jugadoresPendientes)--;
 
-	//presioneTeclaParaContinuar();
-
-	/*if (jugadorActual->apuesta == apuestaActual) {
-		printf("%s pasa.\n", jugadorActual->nombre);
-	} else {
-		int diferencia = apuestaActual - jugadorActual->apuesta;
-		if (jugadorActual->fichas >= diferencia) {
-			jugadorActual->fichas -= diferencia;
-			jugadorActual->apuesta += diferencia;
-			partida->mesa.bote += diferencia;
-			printf("%s \033[1;93miguala la apuesta.\033[0m\n", jugadorActual->nombre);
-			if (jugadorActual->fichas == 0){
-				printf("%s va ", jugadorActual->nombre);
-				arcoiris("all-in");
-				puts("");
-			} 
-		} else {
-			partida->mesa.bote += jugadorActual->fichas;
-			jugadorActual->apuesta += jugadorActual->fichas;
-			jugadorActual->fichas = 0;
-			printf("%s va ", jugadorActual->nombre);
-			arcoiris("all-in");
-			puts("");
-		}
-	}
-	jugadorActual->yaActuo = 1;
-	jugadorActual->hizoRiseCall = 1;
-	(*jugadoresPendientes)--;*/
 }
 
 void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPendientes, Jugador *inicio, int  *cantidad, Jugador *jug){
@@ -227,7 +199,7 @@ void raise(Jugador *actual, int *apuestaMax, Partida *partida, int *jugadoresPen
 	} while (jug != inicio2);
 	actual->yaActuo = 1;
 	(*jugadoresPendientes) = contarJugadoresPendientes(partida->jugadores, actual);
-	
+
 	inicio = actual;
 	//presioneTeclaParaContinuar();
 }

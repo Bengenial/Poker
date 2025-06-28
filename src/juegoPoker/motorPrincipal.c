@@ -256,8 +256,6 @@ Accion tomarDecisiones(Partida *partida, Jugador *jugadorActual, int apuestaMax)
 	return ACCION_FOLD;
 	*/
 
-
-    // === PASO 1: LÓGICA DE DECISIÓN UNIFICADA ===
     // El bot decide qué quiere hacer basándose en sus cartas.
 
     if (partida->mesa.total == 0) { // --- LÓGICA PRE-FLOP ---

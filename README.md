@@ -233,5 +233,11 @@ Dos Pares
 
 - La inteligencia artificial de los bots es funcional pero básica. Está diseñada para tomar decisiones basadas en la fuerza de su mano, pero puede no siempre elegir la jugada más óptima desde una perspectiva estratégica avanzada.
 - El juego está diseñado para terminales de texto. La visualización puede variar ligeramente dependiendo de la configuración de la consola utilizada.
-- Problemas con el current, al pasar a un jugador como puntero se pierde el curren de la lista, por lo que para solucionarlo se debe recorrer la lista nuevamente. (posible problemas con los turnos)
+- Problemas con el current, al pasar a un jugador como puntero se pierde el current de la lista, por lo que para solucionarlo se debe recorrer la lista nuevamente. (posible problemas con los turnos)
 - Al repartir el bote no se hace un side-pot, acorde a las reglas del poker Texas Hold'em
+- Bug cuando el jugador hace un all-in, todos los bots se retiran excepto el ultimo, estaba corregido, pero hubo un problema con el historial de github y se perdió ese cambio (primera vez usando github)
+
+## ✅ Soluciones a futuro
+- Implementacion de una Interfaz Gráfica de Usuario (GUI) para un manejo mas intuitivo de los controles.
+- Al repartir el bote, rehacer la funcion definirGanador en donde se ven los posibles posos, en caso que su apuesta no es efectiva (menor a la apuesta máxima)
+- Correccion de bugs, por falta de tiempo, no se logró ver casos especificos, turnos, apuestas, mejora visual etc.
