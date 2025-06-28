@@ -38,6 +38,8 @@ El flujo de una partida completa sigue las reglas estándar de Texas Hold'em:
 
 ## 🛠️ Cómo Compilar y Ejecutar
 
+  ⚠️REVISAR ERRORES CONOCIDOS ANTES DE DESCARGAR EL PROYECTO⚠️
+
 1. Descargar el proyecto completo.
 2. Descomprimir el contenido en una carpeta local.
 3. Asegúrate de tener un compilador de C (como GCC) y, opcionalmente, la utilidad `make`.
@@ -233,6 +235,7 @@ Dos Pares
 
 ## ⚠️ Problemas Conocidos
 
+- Hubo un problema con el repositorio, que al descargar se detecta que hay un virus, no sabemos a ciencia cierta que puede ser, pero para evitar problemas compilar desde la terminal.
 - La inteligencia artificial de los bots es funcional pero básica. Está diseñada para tomar decisiones basadas en la fuerza de su mano, pero puede no siempre elegir la jugada más óptima desde una perspectiva estratégica avanzada.
 - El juego está diseñado para terminales de texto. La visualización puede variar ligeramente dependiendo de la configuración de la consola utilizada.
 - Problemas con el current, al pasar a un jugador como puntero se pierde el current de la lista, por lo que para solucionarlo se debe recorrer la lista nuevamente. (posible problemas con los turnos)
