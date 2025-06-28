@@ -46,8 +46,9 @@ void intro(int timeset){
 
     printf(" |_|    \\___/ |_|\\_\\|_____|_| \\_\\\n");
     //Sleep(timeset*3); //300
-	Sleep(timeset * 3);
+	Sleep(3000);
     printf("\n\n");
+	limpiarPantalla();
 }
 
 void mostrarCarta(Carta carta)
